@@ -103,7 +103,7 @@ public class GameScreen{
 			}
 		});
 		spawner.setDaemon(true);
-		//spawner.start();
+		spawner.start();
 		
 		this.bpoint1 = new BonusPoint(gc, 0, 0);
 		this.bpoint2 = new BonusPoint(gc, 0, 0);
@@ -137,6 +137,10 @@ public class GameScreen{
 			if (obj.getHP() <= 0){
 				this.gameObjects.remove(obj);
 				Bullet.configs.remove(obj);
+				if (obj instanceof Player){
+					System.out.println("GAME OVER");
+					System.exit(0);
+				}
 				i--;
 				if (obj instanceof Enemy && Math.random() > 0.85){ // 85%
 					this.drops.add(new Drop(gc, obj.getX(), obj.getY()));
@@ -188,7 +192,10 @@ public class GameScreen{
 				this.lastHeal = System.currentTimeMillis();
 			}
 			this.keys.put(KeyCode.Q, false);
-		} else if (this.keys.getOrDefault(KeyCode.R, false)){
+		}
+		int am = Bullet.configs.get(this.player).getAmmo();
+		int dam = Bullet.configs.get(this.player).getDefaultAmmo();
+		if (this.keys.getOrDefault(KeyCode.R, false) && am != dam){
 			Bullet.configs.get(this.player).reload();
 			this.keys.put(KeyCode.R, false);
 		}
@@ -213,9 +220,7 @@ public class GameScreen{
 		gc.strokeRect(20, 130, 200, 20);
 		
 		// Ammo
-		int am = Bullet.configs.get(this.player).getAmmo();
 		int an = Bullet.configs.get(this.player).getAmmoAmount();
-		int dam = Bullet.configs.get(this.player).getDefaultAmmo();
 		int dan = Bullet.configs.get(this.player).getDefaultAmount();
 		gc.setFill(Color.ORANGE);
 		double ah = 65*((double)am/dam);

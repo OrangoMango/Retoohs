@@ -27,7 +27,7 @@
 		"ammoAmount" : 10,
 		"cooldown" : 230,
 		"maxDistance" : 450,
-		"rarity" : 1,
+		"rarity" : 0,
 		"goPast" : false,
 		"explode" : false,
 		"timing" : {
@@ -169,7 +169,7 @@
 	},
 	"sniper_common" : {
 		"speed" : 20,
-		"damage" : 10,
+		"damage" : 8,
 		"ammo" : 5,
 		"ammoAmount" : 3,
 		"cooldown" : 230,
@@ -189,8 +189,8 @@
 		"angles" : [0]
 	},
 	"sniper_epic" : {
-		"speed" : 15,
-		"damage" : 5,
+		"speed" : 20,
+		"damage" : 12,
 		"ammo" : 5,
 		"ammoAmount" : 3,
 		"cooldown" : 230,
