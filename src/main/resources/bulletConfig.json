@@ -1,0 +1,212 @@
+{
+	"normal_gun" : {
+		"speed" : 10,
+		"damage" : 10,
+		"ammo" : 10,
+		"ammoAmount" : 5,
+		"cooldown" : 230,
+		"maxDistance" : 450,
+		"rarity" : 0,
+		"goPast" : false,
+		"explode" : false,
+		"timing" : {
+			"amount" : 1,
+			"time" : 0
+		},
+		"distanceDamage" : {
+			"min" : 0,
+			"max" : 0,
+			"increment" : 0
+		},
+		"angles" : [0]
+	},
+	"double_normal_gun" : {
+		"speed" : 10,
+		"damage" : 10,
+		"ammo" : 10,
+		"ammoAmount" : 10,
+		"cooldown" : 230,
+		"maxDistance" : 450,
+		"rarity" : 1,
+		"goPast" : false,
+		"explode" : false,
+		"timing" : {
+			"amount" : 1,
+			"time" : 0
+		},
+		"distanceDamage" : {
+			"min" : 0,
+			"max" : 0,
+			"increment" : 0
+		},
+		"angles" : [-10, 10]
+	},
+	"uzi" : {
+		"speed" : 15,
+		"damage" : 4,
+		"ammo" : 27,
+		"ammoAmount" : 5,
+		"cooldown" : 400,
+		"maxDistance" : 350,
+		"rarity" : 0,
+		"goPast" : false,
+		"explode" : false,
+		"timing" : {
+			"amount" : 3,
+			"time" : 100
+		},
+		"distanceDamage" : {
+			"min" : 0,
+			"max" : 0,
+			"increment" : 0
+		},
+		"angles" : [0]
+	},
+	"grenade_launcher" : {
+		"speed" : 10,
+		"damage" : 15,
+		"ammo" : 24,
+		"ammoAmount" : 3,
+		"cooldown" : 400,
+		"maxDistance" : 500,
+		"rarity" : 2,
+		"goPast" : false,
+		"explode" : true,
+		"timing" : {
+			"amount" : 3,
+			"time" : 250
+		},
+		"distanceDamage" : {
+			"min" : 0,
+			"max" : 0,
+			"increment" : 0
+		},
+		"angles" : [0]
+	},
+	"machine_gun" : {
+		"speed" : 17,
+		"damage" : 3,
+		"ammo" : 100,
+		"ammoAmount" : 2,
+		"cooldown" : 75,
+		"maxDistance" : 450,
+		"rarity" : 2,
+		"goPast" : false,
+		"explode" : false,
+		"timing" : {
+			"amount" : 1,
+			"time" : 0
+		},
+		"distanceDamage" : {
+			"min" : 0,
+			"max" : 0,
+			"increment" : 0
+		},
+		"angles" : [0]
+	},
+	"pirce_gun" : {
+		"speed" : 12,
+		"damage" : 10,
+		"ammo" : 5,
+		"ammoAmount" : 3,
+		"cooldown" : 450,
+		"maxDistance" : 600,
+		"rarity" : 1,
+		"goPast" : true,
+		"explode" : false,
+		"timing" : {
+			"amount" : 1,
+			"time" : 0
+		},
+		"distanceDamage" : {
+			"min" : 0,
+			"max" : 0,
+			"increment" : 0
+		},
+		"angles" : [0]
+	},
+	"shotgun_epic" : {
+		"speed" : 10,
+		"damage" : 30,
+		"ammo" : 15,
+		"ammoAmount" : 10,
+		"cooldown" : 450,
+		"maxDistance" : 150,
+		"rarity" : 1,
+		"goPast" : false,
+		"explode" : false,
+		"timing" : {
+			"amount" : 1,
+			"time" : 0
+		},
+		"distanceDamage" : {
+			"min" : 0,
+			"max" : -24,
+			"increment" : -2
+		},
+		"angles" : [-10, 0, 10]
+	},
+	"small_gun" : {
+		"speed" : 10,
+		"damage" : 5,
+		"ammo" : 50,
+		"ammoAmount" : 1,
+		"cooldown" : 230,
+		"maxDistance" : 500,
+		"rarity" : 0,
+		"goPast" : false,
+		"explode" : false,
+		"timing" : {
+			"amount" : 1,
+			"time" : 0
+		},
+		"distanceDamage" : {
+			"min" : 0,
+			"max" : 0,
+			"increment" : 0
+		},
+		"angles" : [0]
+	},
+	"sniper_common" : {
+		"speed" : 20,
+		"damage" : 10,
+		"ammo" : 5,
+		"ammoAmount" : 3,
+		"cooldown" : 230,
+		"maxDistance" : 650,
+		"rarity" : 0,
+		"goPast" : false,
+		"explode" : false,
+		"timing" : {
+			"amount" : 1,
+			"time" : 0
+		},
+		"distanceDamage" : {
+			"min" : 4,
+			"max" : 25,
+			"increment" : 1
+		},
+		"angles" : [0]
+	},
+	"sniper_epic" : {
+		"speed" : 15,
+		"damage" : 5,
+		"ammo" : 5,
+		"ammoAmount" : 3,
+		"cooldown" : 230,
+		"maxDistance" : 650,
+		"rarity" : 1,
+		"goPast" : false,
+		"explode" : false,
+		"timing" : {
+			"amount" : 1,
+			"time" : 0
+		},
+		"distanceDamage" : {
+			"min" : 5,
+			"max" : 40,
+			"increment" : 1
+		},
+		"angles" : [0]
+	}
+}
