@@ -39,9 +39,11 @@ public class BonusPoint{
 		if (thisRect.intersects(playerRect)){
 			GameScreen.getInstance().score += 50;
 			player.heal(10);
+			MainApplication.playSound(MainApplication.SCORE_SOUND, false);
 			relocate();
 		} else if (diff > MAXTIME){
 			GameScreen.getInstance().score -= 150;
+			MainApplication.playSound(MainApplication.SCORELOST_SOUND, false);
 			relocate();
 		}
 		gc.setFill(Color.YELLOW);

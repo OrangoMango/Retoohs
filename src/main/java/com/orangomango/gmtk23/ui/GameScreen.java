@@ -80,6 +80,9 @@ public class GameScreen{
 				if (exp){
 					this.lastExplosion = System.currentTimeMillis();
 				}
+				if (Bullet.configs.get(this.player).getAmmo() == 0){
+					reloadAmmo();
+				}
 				this.player.shoot(Math.atan2(e.getY()-this.player.getY(), e.getX()-this.player.getX()), exp);
 			}
 		};
@@ -120,6 +123,11 @@ public class GameScreen{
 		return pane;
 	}
 	
+	private void reloadAmmo(){
+		Bullet.configs.get(this.player).reload();
+		MainApplication.playSound(MainApplication.RELOAD_SOUND, false);
+	}
+	
 	private void update(GraphicsContext gc){
 		gc.clearRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
 		gc.setFill(Color.WHITE);
@@ -138,6 +146,7 @@ public class GameScreen{
 				this.gameObjects.remove(obj);
 				Bullet.configs.remove(obj);
 				if (obj instanceof Player){
+					MainApplication.playSound(MainApplication.DEATH_SOUND, false);
 					System.out.println("GAME OVER");
 					System.exit(0);
 				}
@@ -186,6 +195,7 @@ public class GameScreen{
 		
 		if (this.keys.getOrDefault(KeyCode.Q, false) && player.getHP() < 90){
 			// heal
+			MainApplication.playSound(MainApplication.HEAL_SOUND, false);
 			long diff = System.currentTimeMillis()-this.lastHeal;
 			if (diff > 30000){
 				this.player.heal(60);
@@ -196,7 +206,7 @@ public class GameScreen{
 		int am = Bullet.configs.get(this.player).getAmmo();
 		int dam = Bullet.configs.get(this.player).getDefaultAmmo();
 		if (this.keys.getOrDefault(KeyCode.R, false) && am != dam){
-			Bullet.configs.get(this.player).reload();
+			reloadAmmo();
 			this.keys.put(KeyCode.R, false);
 		}
 		

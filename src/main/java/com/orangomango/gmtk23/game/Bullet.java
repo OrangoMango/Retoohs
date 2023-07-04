@@ -3,6 +3,7 @@ package com.orangomango.gmtk23.game;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.geometry.Point2D;
+import javafx.scene.media.AudioClip;
 
 import java.io.*;
 import java.util.*;
@@ -17,13 +18,15 @@ public class Bullet extends GameObject{
 		private int ammoAmount, defaultAmount;
 		private boolean shoot = true;
 		private int cooldown;
+		private String name;
 		
-		public ShooterConfig(int a, int n, int c){
+		public ShooterConfig(String name, int a, int n, int c){
 			this.ammo = a;
 			this.defaultAmmo = a;
 			this.ammoAmount = n;
 			this.defaultAmount = n;
 			this.cooldown = c;
+			this.name = name;
 		}
 		
 		public boolean shoot(){
@@ -33,8 +36,10 @@ public class Bullet extends GameObject{
 			this.ammo--;
 			if (this.ammo < 0){
 				this.ammo = 0;
+				MainApplication.playSound(MainApplication.NOAMMO_SOUND, false);
 				return false;
 			}
+			MainApplication.playSound(gunSounds.get(this.name), false);
 			return true;
 		}
 		
@@ -74,6 +79,7 @@ public class Bullet extends GameObject{
 
 	private static JSONObject bulletConfig;
 	public static Map<GameObject, ShooterConfig> configs = new HashMap<>();
+	public static Map<String, AudioClip> gunSounds = new HashMap<>();
 	
 	static {
 		try {
@@ -101,13 +107,21 @@ public class Bullet extends GameObject{
 		Iterator<String> iterator = bulletConfig.keys();
 		while (iterator.hasNext()){
 			String key = iterator.next();
-			int r = bulletConfig.getJSONObject(key).getInt("rarity");
+			int r = getBulletConfig(key).getInt("rarity");
 			if (r == rarity){
 				guns.add(key);
 			}
 		}
 		Random random = new Random();
 		return guns.get(random.nextInt(guns.size()));
+	}
+	
+	public static void loadGunSounds(){
+		Iterator<String> iterator = bulletConfig.keys();
+		while (iterator.hasNext()){
+			String key = iterator.next();
+			gunSounds.put(key, new AudioClip(Bullet.class.getResource("/audio/"+getBulletConfig(key).getString("audioName")).toExternalForm()));
+		}
 	}
 	
 	public static JSONObject getBulletConfig(String name){
@@ -118,7 +132,7 @@ public class Bullet extends GameObject{
 		JSONObject config = getBulletConfig(name);
 		ShooterConfig conf = configs.getOrDefault(shooter, null);
 		if (conf == null){
-			conf = new ShooterConfig(config.getInt("ammo"), config.getInt("ammoAmount"), config.getInt("cooldown"));
+			conf = new ShooterConfig(name, config.getInt("ammo"), config.getInt("ammoAmount"), config.getInt("cooldown"));
 			configs.put(shooter, conf);
 		}
 		if (bullets != null){

@@ -44,7 +44,9 @@ public abstract class GameObject{
 		if (!damage || this.invulnerable) return;
 		this.damage = false;
 		this.hp -= dmg;
-		if (!(this instanceof Player)){
+		if (this instanceof Player){
+			MainApplication.playSound(MainApplication.DAMAGE_SOUND, false);
+		} else {
 			GameScreen.getInstance().score += dmg;
 			GameScreen.getInstance().getFloatingTexts().add(new FloatingText(this.gc, Integer.toString(dmg), this.x, this.y));
 		}
@@ -76,7 +78,7 @@ public abstract class GameObject{
 			for (int i = 0; i < GameScreen.getInstance().getGameObjects().size(); i++){
 				GameObject obj = GameScreen.getInstance().getGameObjects().get(i);
 				if (obj != this && collided(obj)){
-					this.x -= x-2;
+					this.x -= x;
 					break;
 				}
 			}
@@ -86,7 +88,7 @@ public abstract class GameObject{
 			for (int i = 0; i < GameScreen.getInstance().getGameObjects().size(); i++){
 				GameObject obj = GameScreen.getInstance().getGameObjects().get(i);
 				if (obj != this && collided(obj)){
-					this.y -= y-2;
+					this.y -= y;
 					break;
 				}
 			}

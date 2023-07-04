@@ -1,5 +1,6 @@
 {
 	"normal_gun" : {
+		"audioName" : "shoot.wav",
 		"speed" : 10,
 		"damage" : 10,
 		"ammo" : 10,
@@ -21,6 +22,7 @@
 		"angles" : [0]
 	},
 	"double_normal_gun" : {
+		"audioName" : "shoot.wav",
 		"speed" : 10,
 		"damage" : 10,
 		"ammo" : 10,
@@ -42,6 +44,7 @@
 		"angles" : [-10, 10]
 	},
 	"uzi" : {
+		"audioName" : "triple_gun.mp3",
 		"speed" : 15,
 		"damage" : 4,
 		"ammo" : 27,
@@ -63,9 +66,10 @@
 		"angles" : [0]
 	},
 	"grenade_launcher" : {
+		"audioName" : "explosion.wav",
 		"speed" : 10,
 		"damage" : 15,
-		"ammo" : 24,
+		"ammo" : 12,
 		"ammoAmount" : 3,
 		"cooldown" : 400,
 		"maxDistance" : 500,
@@ -84,6 +88,7 @@
 		"angles" : [0]
 	},
 	"machine_gun" : {
+		"audioName" : "machine_gun.wav",
 		"speed" : 17,
 		"damage" : 3,
 		"ammo" : 100,
@@ -105,6 +110,7 @@
 		"angles" : [0]
 	},
 	"pirce_gun" : {
+		"audioName" : "shoot.wav",
 		"speed" : 12,
 		"damage" : 10,
 		"ammo" : 5,
@@ -126,6 +132,7 @@
 		"angles" : [0]
 	},
 	"shotgun_epic" : {
+		"audioName" : "shotgun.wav",
 		"speed" : 10,
 		"damage" : 30,
 		"ammo" : 15,
@@ -147,6 +154,7 @@
 		"angles" : [-10, 0, 10]
 	},
 	"small_gun" : {
+		"audioName" : "small_gun.wav",
 		"speed" : 10,
 		"damage" : 5,
 		"ammo" : 50,
@@ -168,6 +176,7 @@
 		"angles" : [0]
 	},
 	"sniper_common" : {
+		"audioName" : "sniper.wav",
 		"speed" : 20,
 		"damage" : 8,
 		"ammo" : 5,
@@ -189,6 +198,7 @@
 		"angles" : [0]
 	},
 	"sniper_epic" : {
+		"audioName" : "sniper.wav",
 		"speed" : 20,
 		"damage" : 12,
 		"ammo" : 5,

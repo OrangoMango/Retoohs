@@ -45,6 +45,7 @@ public class Drop{
 		if (thisRect.intersects(playerRect)){
 			String gunName = Bullet.getRandomGun(this.rarity);
 			System.out.println(gunName);
+			MainApplication.playSound(MainApplication.DROP_SOUND, false);
 			player.setGun(gunName);
 			this.exists = false;
 		} else if (diff > MAXTIME){

@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.geometry.Point2D;
 
 import com.orangomango.gmtk23.ui.GameScreen;
+import com.orangomango.gmtk23.MainApplication;
 
 public class Explosion{
 	private GraphicsContext gc;
@@ -30,6 +31,7 @@ public class Explosion{
 		}
 		this.r += 5;
 		if (this.r > 100){
+			MainApplication.playSound(MainApplication.EXPLOSION_SOUND, false);
 			GameScreen.getInstance().explosion = null;
 		}
 	}
