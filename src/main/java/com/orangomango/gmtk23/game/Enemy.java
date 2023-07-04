@@ -22,7 +22,7 @@ public class Enemy extends GameObject{
 		this.target = target;
 		this.invulnerable = true;
 		this.shooter = Math.random() > 0.7;
-		this.hp = 10+5*this.type;
+		this.hp = 10+10*this.type;
 		new Thread(() -> {
 			try {
 				while (this.alpha < 1){

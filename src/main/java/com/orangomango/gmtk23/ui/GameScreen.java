@@ -39,6 +39,7 @@ public class GameScreen{
 			throw new IllegalStateException("instance != null");
 		}
 		instance = this;
+		MainApplication.playSound(MainApplication.BACKGROUND_MUSIC, true);
 	}
 	
 	public static GameScreen getInstance(){
@@ -94,7 +95,12 @@ public class GameScreen{
 			try {
 				Thread.sleep(3000);
 				while (this.gameRunning){
-					int type = 0; //this.score > 5000 ? random.nextInt((this.score-5000)/5000+1)+1 : 0;
+					int type = 0;
+					if (this.score > 1500){
+						int delta = this.score-1500;
+						int n = delta/2000;
+						type = random.nextInt(n+1);
+					}
 					Enemy e = new Enemy(gc, random.nextInt(MainApplication.WIDTH-200)+100, random.nextInt(MainApplication.HEIGHT-200)+100, this.player, type);
 					if (!this.player.collided(e)){
 						this.gameObjects.add(e);

@@ -178,7 +178,7 @@
 	"sniper_common" : {
 		"audioName" : "sniper.wav",
 		"speed" : 20,
-		"damage" : 8,
+		"damage" : 5,
 		"ammo" : 5,
 		"ammoAmount" : 3,
 		"cooldown" : 230,
@@ -200,7 +200,7 @@
 	"sniper_epic" : {
 		"audioName" : "sniper.wav",
 		"speed" : 20,
-		"damage" : 12,
+		"damage" : 8,
 		"ammo" : 5,
 		"ammoAmount" : 3,
 		"cooldown" : 230,
