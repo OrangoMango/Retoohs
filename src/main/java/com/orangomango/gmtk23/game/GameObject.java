@@ -23,21 +23,12 @@ public abstract class GameObject{
 	}
 	
 	protected void startAnimation(int frames, int time){
-		Thread animation = new Thread(() -> {
-			while (GameScreen.getInstance().isGameRunning()){
-				try {
-					this.frameIndex++;
-					if (this.frameIndex == frames){
-						this.frameIndex = 0;
-					}
-					Thread.sleep(time);
-				} catch (InterruptedException ex){
-					ex.printStackTrace();
-				}
+		MainApplication.schedulePeriodic(() -> {
+			this.frameIndex++;
+			if (this.frameIndex == frames){
+				this.frameIndex = 0;
 			}
-		});
-		animation.setDaemon(true);
-		animation.start();
+		}, time);
 	}
 	
 	public void damage(int dmg){

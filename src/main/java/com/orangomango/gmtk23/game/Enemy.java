@@ -8,16 +8,18 @@ import java.util.*;
 import com.orangomango.gmtk23.MainApplication;
 
 public class Enemy extends GameObject{
-	private GameObject target;
 	private static final double SPEED = 2;
+	private static final int SIZE = 32;
 	private static final Image IMAGE = MainApplication.loadImage("enemy.png");
+
+	private GameObject target;
 	private volatile double alpha = 0.5;
 	private boolean shooter, attack = true;
 	private int type;
 	private List<Bullet> bullets = new ArrayList<>();
 	
 	public Enemy(GraphicsContext gc, double x, double y, GameObject target, int type){
-		super(gc, x, y, 32+12*type, 32+12*type);
+		super(gc, x, y, SIZE+6*type, SIZE+6*type);
 		this.type = type;
 		this.target = target;
 		this.invulnerable = true;
@@ -56,7 +58,7 @@ public class Enemy extends GameObject{
 		else if (angle >= Math.PI/3 && angle < 2*Math.PI/3) direction = 0;
 		else direction = 3;
 		
-		gc.drawImage(IMAGE, 1+(this.w+2)*this.frameIndex, 1+(this.h+2)*direction, this.w, this.h, this.x-this.w/2, this.y-this.h/2, this.w, this.h);
+		gc.drawImage(IMAGE, 1+(SIZE+2)*this.frameIndex, 1+(SIZE+2)*direction, SIZE, SIZE, this.x-this.w/2, this.y-this.h/2, this.w, this.h);
 		
 		// Target
 		double distance = Math.sqrt(Math.pow(this.target.getX()-this.x, 2)+Math.pow(this.target.getY()-this.y, 2));
@@ -65,7 +67,7 @@ public class Enemy extends GameObject{
 			move(SPEED*Math.cos(angle), SPEED*Math.sin(angle), true);
 		} else if (this.attack && !this.invulnerable){
 			if (this.shooter){
-				Bullet.applyConfiguration("normal_gun", this.bullets, this.gc, this.x, this.y, angle, this);
+				Bullet.applyConfiguration("enemy_gun", this.bullets, this.gc, this.x, this.y, angle, this);
 			} else {
 				this.target.damage(dmg);
 			}

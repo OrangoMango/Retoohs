@@ -1,7 +1,7 @@
 package com.orangomango.gmtk23.game;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 import javafx.geometry.Point2D;
 import javafx.scene.media.AudioClip;
 
@@ -76,6 +76,7 @@ public class Bullet extends GameObject{
 	private int dmg;
 	private JSONObject config;
 	private Point2D startPos;
+	private static final Image IMAGE = MainApplication.loadImage("bullet.png");
 
 	private static JSONObject bulletConfig;
 	public static Map<GameObject, ShooterConfig> configs = new HashMap<>();
@@ -94,7 +95,7 @@ public class Bullet extends GameObject{
 	}
 	
 	public Bullet(GraphicsContext gc, GameObject shooter, JSONObject config, double x, double y, double angle, int dmg){
-		super(gc, x, y, 15, 15);
+		super(gc, x, y, 12, 12);
 		this.shooter = shooter;
 		this.config = config;
 		this.angle = angle;
@@ -175,8 +176,7 @@ public class Bullet extends GameObject{
 	@Override
 	public void render(){
 		double speed = this.config.getInt("speed");
-		gc.setFill(this.explode ? Color.CYAN : Color.GRAY);
-		gc.fillOval(this.x-this.w/2, this.y-this.h/2, this.w, this.h);
+		gc.drawImage(IMAGE, 1+(this.explode ? this.w+2 : 0), 1, this.w, this.h, this.x-this.w/2, this.y-this.h/2, this.w, this.h);
 		boolean m = move(speed*Math.cos(this.angle), speed*Math.sin(this.angle), false);
 		double distance = this.startPos.distance(new Point2D(this.x, this.y));
 		int increment = (int)(distance/15)*this.config.getJSONObject("distanceDamage").getInt("increment");

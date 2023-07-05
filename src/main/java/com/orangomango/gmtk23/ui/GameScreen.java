@@ -3,6 +3,7 @@ package com.orangomango.gmtk23.ui;
 import javafx.scene.layout.StackPane;
 import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.animation.*;
 import javafx.util.Duration;
@@ -26,13 +27,17 @@ public class GameScreen{
 	private List<Drop> drops = new ArrayList<>();
 	private Map<KeyCode, Boolean> keys = new HashMap<>();
 	private Player player;
-	public int score;
+	public int score = 0;
 	public Explosion explosion;
 	private long lastExplosion;
 	private long lastHeal;
-	private boolean gameRunning = true;
+	private volatile boolean gameRunning = true;
 	private BonusPoint bpoint1, bpoint2;
 	private long startTime;
+	
+	private Image groundImage = MainApplication.loadImage("ground.png");
+	private Image stoneGroundImage = MainApplication.loadImage("ground_stone.png");
+	private boolean[][] groundPattern;
 	
 	public GameScreen(){
 		if (instance != null){
@@ -52,10 +57,6 @@ public class GameScreen{
 	
 	public List<FloatingText> getFloatingTexts(){
 		return this.fTexts;
-	}
-	
-	public boolean isGameRunning(){
-		return this.gameRunning;
 	}
 	
 	public Player getPlayer(){
@@ -101,6 +102,7 @@ public class GameScreen{
 						int n = delta/2000;
 						type = random.nextInt(n+1);
 					}
+					if (type > 4) type = 4;
 					Enemy e = new Enemy(gc, random.nextInt(MainApplication.WIDTH-200)+100, random.nextInt(MainApplication.HEIGHT-200)+100, this.player, type);
 					if (!this.player.collided(e)){
 						this.gameObjects.add(e);
@@ -118,6 +120,13 @@ public class GameScreen{
 		this.bpoint2 = new BonusPoint(gc, 0, 0);
 		this.bpoint1.relocate();
 		this.bpoint2.relocate();
+		
+		this.groundPattern = new boolean[MainApplication.WIDTH/64+1][MainApplication.HEIGHT/64+1];
+		for (int x = 0; x < this.groundPattern.length; x++){
+			for (int y = 0; y < this.groundPattern[0].length; y++){
+				this.groundPattern[x][y] = Math.random() > 0.85;
+			}
+		}
 		
 		this.startTime = System.currentTimeMillis();
 		
@@ -139,6 +148,12 @@ public class GameScreen{
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
 		if (this.score < 0) this.score = 0;
+		
+		for (int x = 0; x < MainApplication.WIDTH; x += 64){
+			for (int y = 0; y < MainApplication.HEIGHT; y += 64){
+				gc.drawImage(this.groundPattern[x/64][y/64] ? this.stoneGroundImage : this.groundImage, x, y, 64, 64);
+			}
+		}
 		
 		// Render bonuspoint
 		this.bpoint1.render();

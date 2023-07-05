@@ -8,6 +8,7 @@ import javafx.scene.media.*;
 import javafx.animation.Animation;
 
 import com.orangomango.gmtk23.ui.HomeScreen;
+import com.orangomango.gmtk23.ui.GameScreen;
 import com.orangomango.gmtk23.game.Bullet;
 
 public class MainApplication extends Application{
@@ -15,6 +16,7 @@ public class MainApplication extends Application{
 	public static final int HEIGHT = 600;
 	public static final int FPS = 40;
 	public static Stage stage;
+	public static boolean threadsRunning = true;
 	
 	private static boolean audioPlayed;
 	public static AudioClip DAMAGE_SOUND;
@@ -81,6 +83,21 @@ public class MainApplication extends Application{
 				ex.printStackTrace();
 			}
 		}).start();
+	}
+	
+	public static void schedulePeriodic(Runnable r, int time){
+		Thread loop = new Thread(() -> {
+			while (threadsRunning){
+				try {
+					r.run();
+					Thread.sleep(time);
+				} catch (InterruptedException ex){
+					ex.printStackTrace();
+				}
+			}
+		});
+		loop.setDaemon(true);
+		loop.start();
 	}
 	
 	public static Image loadImage(String name){

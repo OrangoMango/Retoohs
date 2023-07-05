@@ -2,6 +2,7 @@ package com.orangomango.gmtk23.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 import javafx.geometry.Rectangle2D;
 
 import java.util.Random;
@@ -13,6 +14,9 @@ public class BonusPoint{
 	private GraphicsContext gc;
 	private double x, y;
 	private long startTime;
+	private volatile int extraY;
+	private boolean forward = true;
+	private Image image = MainApplication.loadImage("bonusPoint.png");
 	private static final double SIZE = 20;
 	private static final int MAXTIME = 30000;
 	
@@ -20,6 +24,12 @@ public class BonusPoint{
 		this.gc = gc;
 		this.x = x;
 		this.y = y;
+		MainApplication.schedulePeriodic(() -> {
+			this.extraY += this.forward ? 1 : -1;
+			if (this.extraY == 0 || this.extraY == 10){
+				this.forward = !this.forward;
+			}
+		}, 50);
 	}
 	
 	public void relocate(){
@@ -30,8 +40,9 @@ public class BonusPoint{
 	}
 	
 	public void render(){
-		gc.setFill(Color.YELLOW);
-		gc.fillOval(this.x-SIZE/2, this.y-SIZE/2, SIZE, SIZE);
+		gc.save();
+		gc.translate(0, this.extraY);
+		gc.drawImage(this.image, this.x-SIZE/2, this.y-SIZE/2, SIZE, SIZE);
 		Player player = GameScreen.getInstance().getPlayer();
 		Rectangle2D thisRect = new Rectangle2D(this.x-SIZE/2, this.y-SIZE/2, SIZE, SIZE);
 		Rectangle2D playerRect = new Rectangle2D(player.getX()-player.getWidth()/2, player.getY()-player.getHeight()/2, player.getWidth(), player.getHeight());
@@ -51,5 +62,6 @@ public class BonusPoint{
 		gc.setLineWidth(1.2);
 		gc.fillRect(this.x-SIZE/2, this.y+SIZE/2+5, SIZE*(1-(double)diff/MAXTIME), 7);
 		gc.strokeRect(this.x-SIZE/2, this.y+SIZE/2+5, SIZE, 7);
+		gc.restore();
 	}
 }
