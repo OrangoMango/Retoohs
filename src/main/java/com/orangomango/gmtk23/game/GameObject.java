@@ -10,7 +10,7 @@ public abstract class GameObject{
 	protected double x, y, w, h;
 	protected GraphicsContext gc;
 	protected int hp = 100;
-	private boolean damage = true;
+	protected boolean damage = true;
 	protected boolean invulnerable;
 	protected volatile int frameIndex;
 	
@@ -37,6 +37,8 @@ public abstract class GameObject{
 		this.hp -= dmg;
 		if (this instanceof Player){
 			MainApplication.playSound(MainApplication.DAMAGE_SOUND, false);
+		} else if (this instanceof Boss){
+			MainApplication.playSound(MainApplication.BOSSHIT_SOUND, false);
 		} else {
 			GameScreen.getInstance().score += dmg;
 			GameScreen.getInstance().getFloatingTexts().add(new FloatingText(this.gc, Integer.toString(dmg), this.x, this.y));
@@ -58,6 +60,7 @@ public abstract class GameObject{
 	}
 	
 	public boolean collided(GameObject other){
+		if (other instanceof Boss) return false;
 		Rectangle2D thisObject = new Rectangle2D(this.x-this.w/2, this.y-this.h/2, this.w, this.h);
 		Rectangle2D otherObject = new Rectangle2D(other.x-other.w/2, other.y-other.h/2, other.w, other.h);
 		return thisObject.intersects(otherObject);

@@ -2,6 +2,7 @@ package com.orangomango.gmtk23.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.effect.Glow;
 
 import java.util.*;
 
@@ -43,6 +44,9 @@ public class Enemy extends GameObject{
 	public void render(){
 		gc.save();
 		gc.setGlobalAlpha(this.alpha);
+		if (!this.damage){
+			gc.setEffect(new Glow(0.9));
+		}
 		double angle = Math.atan2(this.target.getY()-this.y, this.target.getX()-this.x);
 
 		/*

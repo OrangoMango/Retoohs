@@ -3,9 +3,10 @@ package com.orangomango.gmtk23.ui;
 import javafx.scene.layout.StackPane;
 import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
-import javafx.scene.image.Image;
+import javafx.scene.image.*;
 import javafx.scene.text.Font;
 import javafx.animation.*;
+import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -25,15 +26,21 @@ public class GameScreen{
 	private List<GameObject> gameObjects = new ArrayList<>();
 	private List<FloatingText> fTexts = new ArrayList<>();
 	private List<Drop> drops = new ArrayList<>();
+	private List<Explosion> explosions = new ArrayList<>();
 	private Map<KeyCode, Boolean> keys = new HashMap<>();
 	private Player player;
-	public int score = 0;
-	public Explosion explosion;
+	public int score;
 	private long lastExplosion;
 	private long lastHeal;
 	private volatile boolean gameRunning = true;
 	private BonusPoint bpoint1, bpoint2;
 	private long startTime;
+	private Timeline loop;
+	private MediaPlayer mediaPlayer;
+	private boolean paused;
+	private long lastPaused;
+	private int pausedTime;
+	private Image pausedImage;
 	
 	private Image groundImage = MainApplication.loadImage("ground.png");
 	private Image stoneGroundImage = MainApplication.loadImage("ground_stone.png");
@@ -44,7 +51,7 @@ public class GameScreen{
 			throw new IllegalStateException("instance != null");
 		}
 		instance = this;
-		MainApplication.playSound(MainApplication.BACKGROUND_MUSIC, true);
+		this.mediaPlayer = MainApplication.playSound(MainApplication.BACKGROUND_MUSIC, true);
 	}
 	
 	public static GameScreen getInstance(){
@@ -59,6 +66,10 @@ public class GameScreen{
 		return this.fTexts;
 	}
 	
+	public List<Explosion> getExplosions(){
+		return this.explosions;
+	}
+	
 	public Player getPlayer(){
 		return this.player;
 	}
@@ -67,7 +78,16 @@ public class GameScreen{
 		StackPane pane = new StackPane();
 		Canvas canvas = new Canvas(MainApplication.WIDTH, MainApplication.HEIGHT);
 		canvas.setFocusTraversable(true);
-		canvas.setOnKeyPressed(e -> this.keys.put(e.getCode(), true));
+		canvas.setOnKeyPressed(e -> {
+			if (e.getCode() == KeyCode.P){
+				setPause(!this.paused);
+				if (this.paused){
+					this.pausedImage = canvas.snapshot(null, new WritableImage(MainApplication.WIDTH, MainApplication.HEIGHT));
+				}
+			} else {
+				this.keys.put(e.getCode(), true);
+			}
+		});
 		canvas.setOnKeyReleased(e -> this.keys.put(e.getCode(), false));
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -76,6 +96,7 @@ public class GameScreen{
 		Bullet.applyConfiguration("normal_gun", null, null, 0, 0, 0, this.player);
 		
 		EventHandler<MouseEvent> mouseEvent = e -> {
+			if (this.paused) return;
 			if (e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY){
 				long diff = System.currentTimeMillis()-this.lastExplosion;
 				boolean exp = e.getButton() == MouseButton.SECONDARY && diff > 15000;
@@ -96,6 +117,7 @@ public class GameScreen{
 			try {
 				Thread.sleep(3000);
 				while (this.gameRunning){
+					if (this.paused) continue;
 					int type = 0;
 					if (this.score > 1500){
 						int delta = this.score-1500;
@@ -120,6 +142,8 @@ public class GameScreen{
 		this.bpoint2 = new BonusPoint(gc, 0, 0);
 		this.bpoint1.relocate();
 		this.bpoint2.relocate();
+
+		spawnBoss(gc);
 		
 		this.groundPattern = new boolean[MainApplication.WIDTH/64+1][MainApplication.HEIGHT/64+1];
 		for (int x = 0; x < this.groundPattern.length; x++){
@@ -130,12 +154,40 @@ public class GameScreen{
 		
 		this.startTime = System.currentTimeMillis();
 		
-		Timeline loop = new Timeline(new KeyFrame(Duration.millis(1000.0/MainApplication.FPS), e -> update(gc)));
-		loop.setCycleCount(Animation.INDEFINITE);
-		loop.play();
+		this.loop = new Timeline(new KeyFrame(Duration.millis(1000.0/MainApplication.FPS), e -> update(gc)));
+		this.loop.setCycleCount(Animation.INDEFINITE);
+		this.loop.play();
 		
 		pane.getChildren().add(canvas);
 		return pane;
+	}
+	
+	private void spawnBoss(GraphicsContext gc){
+		this.gameObjects.add(new Boss(gc, 600, 300));
+		if (this.mediaPlayer != null) this.mediaPlayer.stop();
+		MainApplication.audioPlayed = false;
+		this.mediaPlayer = MainApplication.playSound(MainApplication.BOSS_BACKGROUND_MUSIC, true);
+	}
+	
+	private void quit(){
+		this.gameRunning = false;
+		MainApplication.threadsRunning = false;
+		GameScreen.instance = null;
+		this.loop.stop();
+		if (this.mediaPlayer != null){
+			this.mediaPlayer.stop();
+		}
+	}
+	
+	private void setPause(boolean p){
+		this.paused = p;
+		if (this.paused){
+			this.lastPaused = System.currentTimeMillis();
+		} else {
+			long diff = System.currentTimeMillis()-this.lastPaused;
+			this.pausedTime += diff;
+			this.pausedImage = null;
+		}
 	}
 	
 	private void reloadAmmo(){
@@ -147,6 +199,17 @@ public class GameScreen{
 		gc.clearRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
 		gc.setFill(Color.WHITE);
 		gc.fillRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
+		
+		if (this.pausedImage != null){
+			gc.drawImage(this.pausedImage, 0, 0);
+			gc.save();
+			gc.setGlobalAlpha(0.6);
+			gc.setFill(Color.BLACK);
+			gc.fillRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
+			gc.restore();
+			return;
+		}
+		
 		if (this.score < 0) this.score = 0;
 		
 		for (int x = 0; x < MainApplication.WIDTH; x += 64){
@@ -168,8 +231,10 @@ public class GameScreen{
 				Bullet.configs.remove(obj);
 				if (obj instanceof Player){
 					MainApplication.playSound(MainApplication.DEATH_SOUND, false);
-					System.out.println("GAME OVER");
-					System.exit(0);
+					quit();
+					GameOverScreen gos = new GameOverScreen();
+					MainApplication.stage.getScene().setRoot(gos.getLayout());
+					return;
 				}
 				i--;
 				if (obj instanceof Enemy && Math.random() > 0.85){ // 85%
@@ -179,8 +244,13 @@ public class GameScreen{
 		}
 		
 		// Render explosion
-		if (this.explosion != null){
-			this.explosion.render();
+		for (int i = 0; i < this.explosions.size(); i++){
+			Explosion explosion = this.explosions.get(i);
+			explosion.render();
+			if (!explosion.exists()){
+				this.explosions.remove(explosion);
+				i--;
+			}
 		}
 		
 		// Render floatingTexts
@@ -205,20 +275,20 @@ public class GameScreen{
 		
 		final double playerSpeed = 4;
 		if (this.keys.getOrDefault(KeyCode.W, false)){
-			this.player.move(0, -playerSpeed, true);
+			this.player.move(0, -playerSpeed, false);
 		} else if (this.keys.getOrDefault(KeyCode.A, false)){
-			this.player.move(-playerSpeed, 0, true);
+			this.player.move(-playerSpeed, 0, false);
 		} else if (this.keys.getOrDefault(KeyCode.S, false)){
-			this.player.move(0, playerSpeed, true);
+			this.player.move(0, playerSpeed, false);
 		} else if (this.keys.getOrDefault(KeyCode.D, false)){
-			this.player.move(playerSpeed, 0, true);
+			this.player.move(playerSpeed, 0, false);
 		}
 		
-		if (this.keys.getOrDefault(KeyCode.Q, false) && player.getHP() < 90){
+		if ((this.keys.getOrDefault(KeyCode.Q, false) && this.player.getHP() < 90) || this.player.getHP() < 40){
 			// heal
-			MainApplication.playSound(MainApplication.HEAL_SOUND, false);
 			long diff = System.currentTimeMillis()-this.lastHeal;
 			if (diff > 30000){
+				MainApplication.playSound(MainApplication.HEAL_SOUND, false);
 				this.player.heal(60);
 				this.lastHeal = System.currentTimeMillis();
 			}
@@ -231,6 +301,13 @@ public class GameScreen{
 			this.keys.put(KeyCode.R, false);
 		}
 		
+		if (this.keys.getOrDefault(KeyCode.ESCAPE, false)){
+			quit();
+			HomeScreen hs = new HomeScreen();
+			MainApplication.stage.getScene().setRoot(hs.getLayout());
+			return;
+		}
+		
 		gc.setLineWidth(3);
 		gc.setGlobalAlpha(0.7);
 		gc.setStroke(Color.BLACK);
@@ -241,7 +318,7 @@ public class GameScreen{
 		gc.strokeRect(20, 60, 200, 30);
 		
 		// Explosion bar
-		gc.setFill(Color.CYAN);
+		gc.setFill(Color.YELLOW);
 		gc.fillRect(20, 100, 200*Math.min(1, (System.currentTimeMillis()-this.lastExplosion)/15000.0), 20);
 		gc.strokeRect(20, 100, 200, 20);
 		
@@ -260,6 +337,11 @@ public class GameScreen{
 		gc.fillRect(230, 130, 30*((double)an/dan), 20);
 		gc.strokeRect(230, 130, 30, 20);
 		
+		// Boss bar
+		gc.setFill(Color.PURPLE);
+		gc.fillRect(20, 160, 200*(this.score%4000/4000.0), 20);
+		gc.strokeRect(20, 160, 200, 20);
+		
 		gc.setGlobalAlpha(1);
 		
 		// Score
@@ -270,7 +352,7 @@ public class GameScreen{
 		// Time
 		gc.setFill(Color.BLACK);
 		gc.setFont(FONT_30);
-		long diff = System.currentTimeMillis()-this.startTime;
+		long diff = System.currentTimeMillis()-this.startTime-this.pausedTime;
 		gc.fillText(String.format("%2d:%02d", diff/60000, diff/1000%60), 20, MainApplication.HEIGHT-20);
 	}
 }

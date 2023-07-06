@@ -168,7 +168,7 @@ public class Bullet extends GameObject{
 	
 	private void explode(){
 		if (this.explode){
-			GameScreen.getInstance().explosion = new Explosion(this.gc, this.x, this.y, this.dmg);
+			GameScreen.getInstance().getExplosions().add(new Explosion(this.gc, this.x, this.y, this.dmg));
 			this.exists = false;
 		}
 	}

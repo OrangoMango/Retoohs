@@ -12,12 +12,17 @@ public class Explosion{
 	private double x, y;
 	private double r = 30;
 	private int dmg;
+	private boolean exists = true;
 	
 	public Explosion(GraphicsContext gc, double x, double y, int dmg){
 		this.gc = gc;
 		this.x = x;
 		this.y = y;
 		this.dmg = dmg;
+	}
+	
+	public boolean exists(){
+		return this.exists;
 	}
 	
 	public void render(){
@@ -32,7 +37,7 @@ public class Explosion{
 		this.r += 5;
 		if (this.r > 100){
 			MainApplication.playSound(MainApplication.EXPLOSION_SOUND, false);
-			GameScreen.getInstance().explosion = null;
+			this.exists = false;
 		}
 	}
 }
