@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.event.EventHandler;
+import javafx.scene.media.Media;
 
 import java.util.*;
 
@@ -22,6 +23,8 @@ public class GameScreen{
 	private static GameScreen instance = null;
 	public static final Font FONT_45 = Font.loadFont(GameScreen.class.getResourceAsStream("/main_font.ttf"), 45);
 	public static final Font FONT_30 = Font.loadFont(GameScreen.class.getResourceAsStream("/main_font.ttf"), 30);
+	public static final Font FONT_15 = Font.loadFont(GameScreen.class.getResourceAsStream("/main_font.ttf"), 15);
+	private static final int BOSS_SCORE = 4000;
 	
 	private List<GameObject> gameObjects = new ArrayList<>();
 	private List<FloatingText> fTexts = new ArrayList<>();
@@ -41,6 +44,8 @@ public class GameScreen{
 	private long lastPaused;
 	private int pausedTime;
 	private Image pausedImage;
+	private Boss currentBoss;
+	private int bossExtraScore, lastBossScore;
 	
 	private Image groundImage = MainApplication.loadImage("ground.png");
 	private Image stoneGroundImage = MainApplication.loadImage("ground_stone.png");
@@ -68,6 +73,10 @@ public class GameScreen{
 	
 	public List<Explosion> getExplosions(){
 		return this.explosions;
+	}
+	
+	public Map<KeyCode, Boolean> getKeys(){
+		return this.keys;
 	}
 	
 	public Player getPlayer(){
@@ -125,11 +134,8 @@ public class GameScreen{
 						type = random.nextInt(n+1);
 					}
 					if (type > 4) type = 4;
-					Enemy e = new Enemy(gc, random.nextInt(MainApplication.WIDTH-200)+100, random.nextInt(MainApplication.HEIGHT-200)+100, this.player, type);
-					if (!this.player.collided(e)){
-						this.gameObjects.add(e);
-						Thread.sleep(random.nextInt(1000)+1000);
-					}
+					this.gameObjects.add(new Enemy(gc, random.nextInt(MainApplication.WIDTH-200)+100, random.nextInt(MainApplication.HEIGHT-200)+100, this.player, type));
+					Thread.sleep((random.nextInt(1000)+1000)*(this.currentBoss != null ? 2 : 1));
 				}
 			} catch (InterruptedException ex){
 				ex.printStackTrace();
@@ -142,8 +148,6 @@ public class GameScreen{
 		this.bpoint2 = new BonusPoint(gc, 0, 0);
 		this.bpoint1.relocate();
 		this.bpoint2.relocate();
-
-		spawnBoss(gc);
 		
 		this.groundPattern = new boolean[MainApplication.WIDTH/64+1][MainApplication.HEIGHT/64+1];
 		for (int x = 0; x < this.groundPattern.length; x++){
@@ -162,11 +166,17 @@ public class GameScreen{
 		return pane;
 	}
 	
-	private void spawnBoss(GraphicsContext gc){
-		this.gameObjects.add(new Boss(gc, 600, 300));
+	private void changeMusic(Media music){
 		if (this.mediaPlayer != null) this.mediaPlayer.stop();
 		MainApplication.audioPlayed = false;
-		this.mediaPlayer = MainApplication.playSound(MainApplication.BOSS_BACKGROUND_MUSIC, true);
+		this.mediaPlayer = MainApplication.playSound(music, true);
+	}
+	
+	private void spawnBoss(GraphicsContext gc){
+		this.currentBoss = new Boss(gc, 600, 300);
+		this.gameObjects.add(this.currentBoss);
+		this.lastBossScore = this.score;
+		changeMusic(MainApplication.BOSS_BACKGROUND_MUSIC);
 	}
 	
 	private void quit(){
@@ -174,6 +184,7 @@ public class GameScreen{
 		MainApplication.threadsRunning = false;
 		GameScreen.instance = null;
 		this.loop.stop();
+		this.player.stopAnimation();
 		if (this.mediaPlayer != null){
 			this.mediaPlayer.stop();
 		}
@@ -211,6 +222,9 @@ public class GameScreen{
 		}
 		
 		if (this.score < 0) this.score = 0;
+		if (this.score-this.bossExtraScore-this.lastBossScore >= BOSS_SCORE && this.currentBoss == null){
+			spawnBoss(gc);
+		}
 		
 		for (int x = 0; x < MainApplication.WIDTH; x += 64){
 			for (int y = 0; y < MainApplication.HEIGHT; y += 64){
@@ -239,6 +253,12 @@ public class GameScreen{
 				i--;
 				if (obj instanceof Enemy && Math.random() > 0.85){ // 85%
 					this.drops.add(new Drop(gc, obj.getX(), obj.getY()));
+				}
+				if (obj instanceof Boss){
+					this.currentBoss = null;
+					this.score += 400;
+					this.bossExtraScore += this.score-this.lastBossScore;
+					changeMusic(MainApplication.BACKGROUND_MUSIC);
 				}
 			}
 		}
@@ -276,12 +296,18 @@ public class GameScreen{
 		final double playerSpeed = 4;
 		if (this.keys.getOrDefault(KeyCode.W, false)){
 			this.player.move(0, -playerSpeed, false);
+			this.player.setState(Player.State.MOVING_UP);
 		} else if (this.keys.getOrDefault(KeyCode.A, false)){
 			this.player.move(-playerSpeed, 0, false);
+			this.player.setState(Player.State.MOVING_LEFT);
 		} else if (this.keys.getOrDefault(KeyCode.S, false)){
 			this.player.move(0, playerSpeed, false);
+			this.player.setState(Player.State.MOVING_DOWN);
 		} else if (this.keys.getOrDefault(KeyCode.D, false)){
 			this.player.move(playerSpeed, 0, false);
+			this.player.setState(Player.State.MOVING_RIGHT);
+		} else {
+			this.player.setState(Player.State.IDLE);
 		}
 		
 		if ((this.keys.getOrDefault(KeyCode.Q, false) && this.player.getHP() < 90) || this.player.getHP() < 40){
@@ -337,10 +363,22 @@ public class GameScreen{
 		gc.fillRect(230, 130, 30*((double)an/dan), 20);
 		gc.strokeRect(230, 130, 30, 20);
 		
-		// Boss bar
-		gc.setFill(Color.PURPLE);
-		gc.fillRect(20, 160, 200*(this.score%4000/4000.0), 20);
-		gc.strokeRect(20, 160, 200, 20);
+		// Player has no ammo and can't reload
+		if (am == 0 && an == 0){
+			this.player.setGun("small_gun");
+		}
+
+		if (this.currentBoss != null){
+			// Boss health bar
+			gc.setFill(Color.ORANGE);
+			gc.fillRect(400, 40, 450*((double)this.currentBoss.getHP()/Boss.HEALTH), 40);
+			gc.strokeRect(400, 40, 450, 40);
+		} else {
+			// Boss bar
+			gc.setFill(Color.PURPLE);
+			gc.fillRect(20, 160, 200*((this.score-this.bossExtraScore)%BOSS_SCORE/(double)(BOSS_SCORE)), 20);
+			gc.strokeRect(20, 160, 200, 20);
+		}
 		
 		gc.setGlobalAlpha(1);
 		

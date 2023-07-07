@@ -37,9 +37,8 @@ public abstract class GameObject{
 		this.hp -= dmg;
 		if (this instanceof Player){
 			MainApplication.playSound(MainApplication.DAMAGE_SOUND, false);
-		} else if (this instanceof Boss){
-			MainApplication.playSound(MainApplication.BOSSHIT_SOUND, false);
 		} else {
+			if (this instanceof Boss) MainApplication.playSound(MainApplication.BOSSHIT_SOUND, false);
 			GameScreen.getInstance().score += dmg;
 			GameScreen.getInstance().getFloatingTexts().add(new FloatingText(this.gc, Integer.toString(dmg), this.x, this.y));
 		}

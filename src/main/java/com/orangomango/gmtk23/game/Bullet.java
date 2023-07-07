@@ -95,7 +95,7 @@ public class Bullet extends GameObject{
 	}
 	
 	public Bullet(GraphicsContext gc, GameObject shooter, JSONObject config, double x, double y, double angle, int dmg){
-		super(gc, x, y, 12, 12);
+		super(gc, x, y, 9, 9);
 		this.shooter = shooter;
 		this.config = config;
 		this.angle = angle;
@@ -176,7 +176,7 @@ public class Bullet extends GameObject{
 	@Override
 	public void render(){
 		double speed = this.config.getInt("speed");
-		gc.drawImage(IMAGE, 1+(this.explode ? this.w+2 : 0), 1, this.w, this.h, this.x-this.w/2, this.y-this.h/2, this.w, this.h);
+		gc.drawImage(IMAGE, 1+(this.explode ? 12+2 : 0), 1, 12, 12, this.x-this.w/2, this.y-this.h/2, this.w, this.h);
 		boolean m = move(speed*Math.cos(this.angle), speed*Math.sin(this.angle), false);
 		double distance = this.startPos.distance(new Point2D(this.x, this.y));
 		int increment = (int)(distance/15)*this.config.getJSONObject("distanceDamage").getInt("increment");
