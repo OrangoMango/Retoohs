@@ -114,7 +114,7 @@ public class GameScreen{
 			if (this.paused) return;
 			if (e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY){
 				long diff = System.currentTimeMillis()-this.lastExplosion;
-				boolean exp = e.getButton() == MouseButton.SECONDARY && diff > 15000;
+				boolean exp = e.getButton() == MouseButton.SECONDARY && diff > 10000;
 				if (exp){
 					this.lastExplosion = System.currentTimeMillis();
 				}
@@ -199,11 +199,11 @@ public class GameScreen{
 	}
 	
 	private void quit(){
+		this.loop.stop();
 		this.gameRunning = false;
 		MainApplication.threadsRunning = false;
-		MainApplication.schedule(() -> MainApplication.threadsRunning = true, 1000);
+		MainApplication.schedule(() -> MainApplication.threadsRunning = true, 500);
 		MainApplication.schedule(() -> GameScreen.instance = null, 500);
-		this.loop.stop();
 		this.player.stopAnimation();
 		if (this.mediaPlayer != null){
 			this.mediaPlayer.stop();
@@ -268,12 +268,10 @@ public class GameScreen{
 				this.gameObjects.remove(obj);
 				Bullet.configs.remove(obj);
 				if (obj instanceof Player){
-					MainApplication.schedule(() -> {
-						MainApplication.playSound(MainApplication.DEATH_SOUND, false);
-						quit();
-						GameOverScreen gos = new GameOverScreen();
-						MainApplication.stage.getScene().setRoot(gos.getLayout());
-					}, 750);
+					MainApplication.playSound(MainApplication.DEATH_SOUND, false);
+					quit();
+					GameOverScreen gos = new GameOverScreen();
+					MainApplication.stage.getScene().setRoot(gos.getLayout());
 					return;
 				}
 				i--;
@@ -373,7 +371,7 @@ public class GameScreen{
 		
 		// Explosion bar
 		gc.setFill(Color.YELLOW);
-		gc.fillRect(20, 100, 200*Math.min(1, (System.currentTimeMillis()-this.lastExplosion)/15000.0), 20);
+		gc.fillRect(20, 100, 200*Math.min(1, (System.currentTimeMillis()-this.lastExplosion)/10000.0), 20);
 		gc.strokeRect(20, 100, 200, 20);
 		
 		// Heal bar
