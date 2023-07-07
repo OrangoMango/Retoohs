@@ -46,7 +46,7 @@ public class BonusPoint{
 		Player player = GameScreen.getInstance().getPlayer();
 		Rectangle2D thisRect = new Rectangle2D(this.x-SIZE/2, this.y-SIZE/2, SIZE, SIZE);
 		Rectangle2D playerRect = new Rectangle2D(player.getX()-player.getWidth()/2, player.getY()-player.getHeight()/2, player.getWidth(), player.getHeight());
-		long diff = System.currentTimeMillis()-this.startTime;
+		long diff = System.currentTimeMillis()-this.startTime-GameScreen.getInstance().getPausedTime();
 		if (thisRect.intersects(playerRect)){
 			GameScreen.getInstance().score += 50;
 			player.heal(10);

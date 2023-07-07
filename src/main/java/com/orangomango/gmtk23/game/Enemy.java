@@ -67,7 +67,7 @@ public class Enemy extends GameObject{
 		// Target
 		double distance = Math.sqrt(Math.pow(this.target.getX()-this.x, 2)+Math.pow(this.target.getY()-this.y, 2));
 		int dmg = 10+5*this.type;
-		if (distance > (this.shooter ? 220 : 55)){
+		if (distance > (this.shooter ? 220 : 45)){
 			move(SPEED*Math.cos(angle), SPEED*Math.sin(angle), true);
 		} else if (this.attack && !this.invulnerable){
 			if (this.shooter){
@@ -77,6 +77,12 @@ public class Enemy extends GameObject{
 			}
 			this.attack = false;
 			MainApplication.schedule(() -> this.attack = true, this.shooter ? 1000 : 500);
+		}
+		
+		Bullet.ShooterConfig conf = Bullet.configs.getOrDefault(this, null);
+		if (conf != null){
+			Image gunImage = Bullet.gunImages.get("enemy_gun");
+			renderGun(gunImage, Math.toDegrees(angle));
 		}
 		
 		// Render the bullets

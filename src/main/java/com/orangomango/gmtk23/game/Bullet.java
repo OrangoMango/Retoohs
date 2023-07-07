@@ -81,6 +81,7 @@ public class Bullet extends GameObject{
 	private static JSONObject bulletConfig;
 	public static Map<GameObject, ShooterConfig> configs = new HashMap<>();
 	public static Map<String, AudioClip> gunSounds = new HashMap<>();
+	public static Map<String, Image> gunImages = new HashMap<>();
 	
 	static {
 		try {
@@ -89,6 +90,13 @@ public class Bullet extends GameObject{
 			reader.lines().forEach(builder::append);
 			reader.close();
 			bulletConfig = new JSONObject(builder.toString());
+			
+			// Load images
+			Iterator<String> iterator = bulletConfig.keys();
+			while (iterator.hasNext()){
+				String key = iterator.next();
+				gunImages.put(key, MainApplication.loadImage(getBulletConfig(key).getString("imageName")));
+			}
 		} catch (IOException ex){
 			ex.printStackTrace();
 		}
@@ -141,6 +149,7 @@ public class Bullet extends GameObject{
 			if (ok){
 				Thread gen = new Thread(() -> {
 					try {
+						if (config.getBoolean("screenShake")) GameScreen.getInstance().screenShake();
 						for (Object o : config.getJSONArray("angles")){
 							for (int i = 0; i < config.getJSONObject("timing").getInt("amount"); i++){
 								Bullet b = new Bullet(gc, shooter, config, x, y, angle+Math.toRadians((int)o), config.getInt("damage"));

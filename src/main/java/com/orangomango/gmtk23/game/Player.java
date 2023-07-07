@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import javafx.geometry.Point2D;
 import javafx.animation.*;
 import javafx.util.Duration;
+import javafx.scene.effect.Glow;
 
 import java.util.*;
 
@@ -43,6 +44,7 @@ public class Player extends GameObject{
 	private String currentGun = "normal_gun";
 	private State currentState = State.IDLE;
 	private Timeline animation;
+	private double pointAngle;
 	private volatile Point2D frameIndex = currentState.getStartPoint();
 	private static Image IMAGE = MainApplication.loadImage("player.png");
 	
@@ -83,8 +85,16 @@ public class Player extends GameObject{
 		return this.currentGun;
 	}
 	
+	public void pointGun(double a){
+		this.pointAngle = Math.toDegrees(a);
+	}
+	
 	@Override
 	public void render(){
+		gc.save();
+		if (!this.damage){
+			gc.setEffect(new Glow(0.9));
+		}
 		gc.drawImage(IMAGE, 1+(32+2)*this.frameIndex.getX(), 1+(32+2)*this.frameIndex.getY(), 32, 32, this.x-this.w/2, this.y-this.h/2, this.w, this.h);
 		for (int i = 0; i < this.bullets.size(); i++){
 			Bullet b = this.bullets.get(i);
@@ -94,5 +104,10 @@ public class Player extends GameObject{
 				i--;
 			}
 		}
+		
+		Image gunImage = Bullet.gunImages.get(this.currentGun);
+		renderGun(gunImage, this.pointAngle);
+		
+		gc.restore();
 	}
 }

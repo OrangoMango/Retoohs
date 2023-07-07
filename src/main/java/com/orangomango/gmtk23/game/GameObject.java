@@ -2,6 +2,7 @@ package com.orangomango.gmtk23.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
 
 import com.orangomango.gmtk23.ui.GameScreen;
 import com.orangomango.gmtk23.MainApplication;
@@ -31,12 +32,24 @@ public abstract class GameObject{
 		}, time);
 	}
 	
+	protected void renderGun(Image gunImage, double angle){
+		gc.save();
+		final double gw = 17;
+		final double gh = 17*(Math.abs(angle) > 90 ? -1 : 1);
+		gc.translate(this.x, this.y+2);
+		gc.rotate(angle);
+		gc.setGlobalAlpha(0.75);
+		gc.drawImage(gunImage, -gw/2, -gh/2, gw, gh);
+		gc.restore();
+	}
+	
 	public void damage(int dmg){
 		if (!damage || this.invulnerable) return;
 		this.damage = false;
 		this.hp -= dmg;
 		if (this instanceof Player){
 			MainApplication.playSound(MainApplication.DAMAGE_SOUND, false);
+			GameScreen.getInstance().screenShake();
 		} else {
 			if (this instanceof Boss) MainApplication.playSound(MainApplication.BOSSHIT_SOUND, false);
 			GameScreen.getInstance().score += dmg;

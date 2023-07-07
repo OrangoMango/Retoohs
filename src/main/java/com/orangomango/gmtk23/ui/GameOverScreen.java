@@ -13,7 +13,7 @@ public class GameOverScreen{
 	private MediaPlayer mediaPlayer;
 	
 	public GameOverScreen(){
-		MainApplication.schedule(() -> this.mediaPlayer = MainApplication.playSound(MainApplication.GAMEOVER_BACKGROUND_MUSIC, true), 1000);
+		MainApplication.schedule(() -> this.mediaPlayer = MainApplication.playSound(MainApplication.GAMEOVER_BACKGROUND_MUSIC, true), 500);
 	}
 
 	public StackPane getLayout(){

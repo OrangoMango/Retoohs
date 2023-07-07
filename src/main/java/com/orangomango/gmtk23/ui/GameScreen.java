@@ -46,10 +46,12 @@ public class GameScreen{
 	private Image pausedImage;
 	private Boss currentBoss;
 	private int bossExtraScore, lastBossScore;
+	private boolean shaking;
+	private double cameraShakeX, cameraShakeY;
 	
 	private Image groundImage = MainApplication.loadImage("ground.png");
-	private Image stoneGroundImage = MainApplication.loadImage("ground_stone.png");
-	private boolean[][] groundPattern;
+	private Image[] stoneGroundImages = new Image[]{MainApplication.loadImage("ground_stone_0.png"), MainApplication.loadImage("ground_stone_1.png")};
+	private int[][] groundPattern;
 	
 	public GameScreen(){
 		if (instance != null){
@@ -77,6 +79,10 @@ public class GameScreen{
 	
 	public Map<KeyCode, Boolean> getKeys(){
 		return this.keys;
+	}
+	
+	public int getPausedTime(){
+		return this.pausedTime;
 	}
 	
 	public Player getPlayer(){
@@ -121,6 +127,8 @@ public class GameScreen{
 		canvas.setOnMousePressed(mouseEvent);
 		canvas.setOnMouseDragged(mouseEvent);
 		
+		canvas.setOnMouseMoved(e -> this.player.pointGun(Math.atan2(e.getY()-this.player.getY(), e.getX()-this.player.getX())));
+		
 		Thread spawner = new Thread(() -> {
 			Random random = new Random();
 			try {
@@ -149,10 +157,11 @@ public class GameScreen{
 		this.bpoint1.relocate();
 		this.bpoint2.relocate();
 		
-		this.groundPattern = new boolean[MainApplication.WIDTH/64+1][MainApplication.HEIGHT/64+1];
+		Random random = new Random();
+		this.groundPattern = new int[MainApplication.WIDTH/64+1][MainApplication.HEIGHT/64+1];
 		for (int x = 0; x < this.groundPattern.length; x++){
 			for (int y = 0; y < this.groundPattern[0].length; y++){
-				this.groundPattern[x][y] = Math.random() > 0.85;
+				this.groundPattern[x][y] = Math.random() > 0.75 ? random.nextInt(this.stoneGroundImages.length) : -1;
 			}
 		}
 		
@@ -172,6 +181,16 @@ public class GameScreen{
 		this.mediaPlayer = MainApplication.playSound(music, true);
 	}
 	
+	public void screenShake(){
+		if (this.shaking) return;
+		this.shaking = true;
+		MainApplication.schedule(() -> this.cameraShakeX = -5, 50);
+		MainApplication.schedule(() -> this.cameraShakeX = 0, 150);
+		MainApplication.schedule(() -> this.cameraShakeY = -5, 200);
+		MainApplication.schedule(() -> this.cameraShakeY = 0, 250);
+		MainApplication.schedule(() -> this.shaking = false, 300);
+	}
+	
 	private void spawnBoss(GraphicsContext gc){
 		this.currentBoss = new Boss(gc, 600, 300);
 		this.gameObjects.add(this.currentBoss);
@@ -182,7 +201,8 @@ public class GameScreen{
 	private void quit(){
 		this.gameRunning = false;
 		MainApplication.threadsRunning = false;
-		GameScreen.instance = null;
+		MainApplication.schedule(() -> MainApplication.threadsRunning = true, 1000);
+		MainApplication.schedule(() -> GameScreen.instance = null, 500);
 		this.loop.stop();
 		this.player.stopAnimation();
 		if (this.mediaPlayer != null){
@@ -208,7 +228,7 @@ public class GameScreen{
 	
 	private void update(GraphicsContext gc){
 		gc.clearRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
-		gc.setFill(Color.WHITE);
+		gc.setFill(Color.LIME);
 		gc.fillRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
 		
 		if (this.pausedImage != null){
@@ -226,9 +246,13 @@ public class GameScreen{
 			spawnBoss(gc);
 		}
 		
+		gc.save();
+		gc.translate(-this.cameraShakeX, -this.cameraShakeY);
+		
 		for (int x = 0; x < MainApplication.WIDTH; x += 64){
 			for (int y = 0; y < MainApplication.HEIGHT; y += 64){
-				gc.drawImage(this.groundPattern[x/64][y/64] ? this.stoneGroundImage : this.groundImage, x, y, 64, 64);
+				int index = this.groundPattern[x/64][y/64];
+				gc.drawImage(index >= 0 ? this.stoneGroundImages[index] : this.groundImage, x, y, 64, 64);
 			}
 		}
 		
@@ -244,10 +268,12 @@ public class GameScreen{
 				this.gameObjects.remove(obj);
 				Bullet.configs.remove(obj);
 				if (obj instanceof Player){
-					MainApplication.playSound(MainApplication.DEATH_SOUND, false);
-					quit();
-					GameOverScreen gos = new GameOverScreen();
-					MainApplication.stage.getScene().setRoot(gos.getLayout());
+					MainApplication.schedule(() -> {
+						MainApplication.playSound(MainApplication.DEATH_SOUND, false);
+						quit();
+						GameOverScreen gos = new GameOverScreen();
+						MainApplication.stage.getScene().setRoot(gos.getLayout());
+					}, 750);
 					return;
 				}
 				i--;
@@ -333,6 +359,8 @@ public class GameScreen{
 			MainApplication.stage.getScene().setRoot(hs.getLayout());
 			return;
 		}
+		
+		gc.restore();
 		
 		gc.setLineWidth(3);
 		gc.setGlobalAlpha(0.7);
