@@ -3,22 +3,23 @@ package com.orangomango.gmtk23.ui;
 import javafx.scene.layout.StackPane;
 import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
-import javafx.scene.image.Image;
 import javafx.animation.*;
 import javafx.util.Duration;
 import javafx.scene.input.MouseButton;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.media.MediaPlayer;
 
-import java.util.*;
+import java.io.*;
 
 import com.orangomango.gmtk23.MainApplication;
 
-public class HomeScreen{
-	private MediaPlayer mediaPlayer;
+public class CreditsScreen{
 	private Timeline loop;
-	private List<MenuButton> buttons = new ArrayList<>();
+	private double scroll;
+	private String credits;
+	private MediaPlayer mediaPlayer;
 	
-	public HomeScreen(){
+	public CreditsScreen(){
 		this.mediaPlayer = MainApplication.playSound(MainApplication.MENU_BACKGROUND_MUSIC, true);
 	}
 	
@@ -29,28 +30,22 @@ public class HomeScreen{
 		
 		canvas.setOnMousePressed(e -> {
 			if (e.getButton() == MouseButton.PRIMARY){
-				for (MenuButton mb : this.buttons){
-					mb.click(e.getX(), e.getY());
-				}
+				this.loop.stop();
+				if (this.mediaPlayer != null) this.mediaPlayer.stop();
+				HomeScreen hs = new HomeScreen();
+				MainApplication.stage.getScene().setRoot(hs.getLayout());
 			}
 		});
 		
-		Image playButtonImage = MainApplication.loadImage("warning.png"); //placeholder
-		MenuButton playButton = new MenuButton(gc, 425, 250, 150, 50, playButtonImage, () -> {
-			this.loop.stop();
-			if (this.mediaPlayer != null) this.mediaPlayer.stop();
-			GameScreen gs = new GameScreen();
-			MainApplication.stage.getScene().setRoot(gs.getLayout());
-		});
-		this.buttons.add(playButton);
-		Image creditsButtonImage = MainApplication.loadImage("warning.png"); //placeholder
-		MenuButton creditsButton = new MenuButton(gc, 425, 400, 150, 50, creditsButtonImage, () -> {
-			this.loop.stop();
-			if (this.mediaPlayer != null) this.mediaPlayer.stop();
-			CreditsScreen cs = new CreditsScreen();
-			MainApplication.stage.getScene().setRoot(cs.getLayout());
-		});
-		this.buttons.add(creditsButton);
+		try {
+			StringBuilder builder = new StringBuilder();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(MainApplication.class.getResourceAsStream("/credits.txt")));
+			reader.lines().forEach(line -> builder.append(line).append("\n"));
+			reader.close();
+			this.credits = builder.toString();
+		} catch (IOException ex){
+			ex.printStackTrace();
+		}
 		
 		this.loop = new Timeline(new KeyFrame(Duration.millis(1000.0/MainApplication.FPS), e -> update(gc)));
 		this.loop.setCycleCount(Animation.INDEFINITE);
@@ -62,10 +57,18 @@ public class HomeScreen{
 	
 	private void update(GraphicsContext gc){
 		gc.clearRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
-		gc.setFill(Color.LIME);
+		gc.setFill(Color.YELLOW);
 		gc.fillRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
-		for (MenuButton mb : this.buttons){
-			mb.render();
+		gc.setFill(Color.BLACK);
+		gc.save();
+		gc.setFont(GameScreen.FONT_30);
+		gc.setTextAlign(TextAlignment.CENTER);
+		gc.translate(0, -this.scroll);
+		gc.fillText(this.credits, MainApplication.WIDTH/2, 125);
+		gc.restore();
+		this.scroll++;
+		if (this.scroll > MainApplication.HEIGHT){
+			this.scroll = 0;
 		}
 	}
 }

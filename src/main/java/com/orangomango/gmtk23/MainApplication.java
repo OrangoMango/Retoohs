@@ -35,6 +35,7 @@ public class MainApplication extends Application{
 	public static AudioClip BOSSHIT_SOUND;
 	public static AudioClip BOSSSUPER_SOUND;
 	public static AudioClip WARNING_SOUND;
+	public static AudioClip SWOOSH_SOUND;
 	
 	@Override
 	public void start(Stage stage){
@@ -66,6 +67,7 @@ public class MainApplication extends Application{
 		BOSSHIT_SOUND = new AudioClip(MainApplication.class.getResource("/audio/boss_hit.wav").toExternalForm());
 		BOSSSUPER_SOUND = new AudioClip(MainApplication.class.getResource("/audio/boss_super.wav").toExternalForm());
 		WARNING_SOUND = new AudioClip(MainApplication.class.getResource("/audio/warning.wav").toExternalForm());
+		SWOOSH_SOUND = new AudioClip(MainApplication.class.getResource("/audio/swoosh.wav").toExternalForm());
 	}
 	
 	public static MediaPlayer playSound(Media media, boolean rep){

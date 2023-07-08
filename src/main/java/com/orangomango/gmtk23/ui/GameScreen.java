@@ -214,6 +214,7 @@ public class GameScreen{
 		setPause(true);
 		this.tempStopped = true;
 		this.pausedImage = canvas.snapshot(null, new WritableImage(MainApplication.WIDTH, MainApplication.HEIGHT));
+		MainApplication.playSound(MainApplication.SWOOSH_SOUND, false);
 		Timeline anim = new Timeline(new KeyFrame(Duration.millis(100), e -> this.reverseIndex++));
 		anim.setCycleCount(5);
 		anim.setOnFinished(e -> this.reverseIndex = 0);

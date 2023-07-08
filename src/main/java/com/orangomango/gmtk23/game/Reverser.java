@@ -12,20 +12,25 @@ public class Reverser{
 	private volatile boolean blink;
 	private long lastTime;
 	private boolean startAllowed = true;
+	private boolean makeSound = false;
 	
 	public Reverser(GraphicsContext gc){
 		this.gc = gc;
 		this.lastTime = System.currentTimeMillis();
 		MainApplication.schedulePeriodic(() -> {
-			if (!GameScreen.getInstance().isPaused() && !this.startAllowed){
+			if (!GameScreen.getInstance().isPaused()){
 				this.blink = !this.blink;
-				if (this.blink) MainApplication.playSound(MainApplication.WARNING_SOUND, false);
+				if (this.blink && this.makeSound){
+					MainApplication.playSound(MainApplication.WARNING_SOUND, false);
+				}
 			}
-		}, 500);
+		}, 250);
 	}
 	
 	public void start(){
 		this.startAllowed = false;
+		this.blink = false;
+		this.makeSound = false;
 		GameScreen.getInstance().playsPlayer = false;
 		GameScreen.getInstance().getPlayer().heal(100);
 		GameScreen.getInstance().tempstop(gc.getCanvas());
@@ -33,15 +38,18 @@ public class Reverser{
 	
 	public void allowStart(){
 		this.startAllowed = true;
+		this.lastTime = System.currentTimeMillis();
 	}
 	
 	public void render(){
-		if (this.blink){
+		if (this.blink && this.makeSound){
 			gc.drawImage(this.image, MainApplication.WIDTH-100, MainApplication.HEIGHT-100, 64, 64);
 		}
 		long diff = System.currentTimeMillis()-this.lastTime-GameScreen.getInstance().getPausedTime();
+		if (diff > 15000 && this.startAllowed){
+			this.makeSound = true;
+		}
 		if (diff > 20000 && this.startAllowed){
-			this.lastTime = System.currentTimeMillis();
 			start();
 		}
 	}
