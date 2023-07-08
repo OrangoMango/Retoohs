@@ -25,14 +25,27 @@ public class BonusPoint{
 		this.x = x;
 		this.y = y;
 		MainApplication.schedulePeriodic(() -> {
-			this.extraY += this.forward ? 1 : -1;
-			if (this.extraY == 0 || this.extraY == 10){
-				this.forward = !this.forward;
+			if (!GameScreen.getInstance().isPaused()){
+				this.extraY += this.forward ? 1 : -1;
+				if (this.extraY == 0 || this.extraY == 10){
+					this.forward = !this.forward;
+				}
 			}
 		}, 50);
 	}
 	
+	public double getX(){
+		return this.x;
+	}
+	
+	public double getY(){
+		return this.y;
+	}
+	
 	public void relocate(){
+		if (GameScreen.getInstance().targetPoint == this){
+			GameScreen.getInstance().targetPoint = null;
+		}
 		Random random = new Random();
 		this.x = random.nextInt(MainApplication.WIDTH-200)+100;
 		this.y = random.nextInt(MainApplication.HEIGHT-200)+100;
@@ -48,12 +61,12 @@ public class BonusPoint{
 		Rectangle2D playerRect = new Rectangle2D(player.getX()-player.getWidth()/2, player.getY()-player.getHeight()/2, player.getWidth(), player.getHeight());
 		long diff = System.currentTimeMillis()-this.startTime-GameScreen.getInstance().getPausedTime();
 		if (thisRect.intersects(playerRect)){
-			GameScreen.getInstance().score += 50;
+			GameScreen.getInstance().score += 50*(GameScreen.getInstance().playsPlayer ? 1 : -1);
 			player.heal(10);
 			MainApplication.playSound(MainApplication.SCORE_SOUND, false);
 			relocate();
 		} else if (diff > MAXTIME){
-			GameScreen.getInstance().score -= 150;
+			GameScreen.getInstance().score -= 150*(GameScreen.getInstance().playsPlayer ? 1 : -1);
 			MainApplication.playSound(MainApplication.SCORELOST_SOUND, false);
 			relocate();
 		}

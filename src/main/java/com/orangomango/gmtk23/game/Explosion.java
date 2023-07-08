@@ -29,7 +29,9 @@ public class Explosion{
 		gc.setFill(Color.ORANGE);
 		gc.fillOval(this.x-this.r, this.y-this.r, this.r*2, this.r*2);
 		Point2D pos = new Point2D(this.x, this.y);
-		for (GameObject obj : GameScreen.getInstance().getGameObjects()){
+		for (int i = 0; i < GameScreen.getInstance().getGameObjects().size(); i++){
+			GameObject obj = GameScreen.getInstance().getGameObjects().get(i);
+			if (obj instanceof Player) continue;
 			if (pos.distance(new Point2D(obj.getX(), obj.getY())) < this.r){
 				obj.damage(this.dmg);
 			}

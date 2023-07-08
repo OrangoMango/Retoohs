@@ -39,10 +39,21 @@ public class Drop{
 			this.rarity = 2; // Legendary
 			this.image = IMAGE_LEGENDARY;
 		}
+		if (this.rarity >= Bullet.getBulletConfig(GameScreen.getInstance().getPlayer().getCurrentGun()).getInt("rarity")){
+			GameScreen.getInstance().targetDrop = this;
+		}
 	}
 	
 	public boolean exists(){
 		return this.exists;
+	}
+	
+	public double getX(){
+		return this.x;
+	}
+	
+	public double getY(){
+		return this.y;
 	}
 	
 	public void render(){
@@ -53,12 +64,15 @@ public class Drop{
 		long diff = System.currentTimeMillis()-this.startTime-GameScreen.getInstance().getPausedTime();
 		int playerRarity = Bullet.getBulletConfig(player.getCurrentGun()).getInt("rarity");
 		if (thisRect.intersects(playerRect)){
-			if (this.rarity >= playerRarity || GameScreen.getInstance().getKeys().getOrDefault(KeyCode.E, false)){		
+			if (this.rarity >= playerRarity || (GameScreen.getInstance().getKeys().getOrDefault(KeyCode.E, false)) && GameScreen.getInstance().playsPlayer){		
 				String gunName = Bullet.getRandomGun(this.rarity);
 				System.out.println(gunName);
 				MainApplication.playSound(MainApplication.DROP_SOUND, false);
 				player.setGun(gunName);
 				this.exists = false;
+				if (GameScreen.getInstance().targetDrop == this){
+					GameScreen.getInstance().targetDrop = null;
+				}
 			}
 		} else if (diff > MAXTIME){
 			this.exists = false;
@@ -68,7 +82,7 @@ public class Drop{
 		gc.setLineWidth(1.2);
 		gc.fillRect(this.x-SIZE/2, this.y+SIZE/2+5, SIZE*(1-(double)diff/MAXTIME), 7);
 		gc.strokeRect(this.x-SIZE/2, this.y+SIZE/2+5, SIZE, 7);
-		if (thisRect.intersects(playerRect) && this.rarity < playerRarity){
+		if (thisRect.intersects(playerRect) && this.rarity < playerRarity && GameScreen.getInstance().playsPlayer){
 			gc.setFill(Color.BLACK);
 			gc.setFont(GameScreen.FONT_15);
 			gc.fillText("Press E to confirm", this.x, this.y-SIZE/2-3);

@@ -25,9 +25,11 @@ public abstract class GameObject{
 	
 	protected void startAnimation(int frames, int time){
 		MainApplication.schedulePeriodic(() -> {
-			this.frameIndex++;
-			if (this.frameIndex == frames){
-				this.frameIndex = 0;
+			if (!GameScreen.getInstance().isPaused()){
+				this.frameIndex++;
+				if (this.frameIndex == frames){
+					this.frameIndex = 0;
+				}
 			}
 		}, time);
 	}
@@ -50,9 +52,13 @@ public abstract class GameObject{
 		if (this instanceof Player){
 			MainApplication.playSound(MainApplication.DAMAGE_SOUND, false);
 			GameScreen.getInstance().screenShake();
+			if (!GameScreen.getInstance().playsPlayer){
+				GameScreen.getInstance().score += dmg;
+				GameScreen.getInstance().getFloatingTexts().add(new FloatingText(this.gc, Integer.toString(dmg), this.x, this.y));
+			}
 		} else {
 			if (this instanceof Boss) MainApplication.playSound(MainApplication.BOSSHIT_SOUND, false);
-			GameScreen.getInstance().score += dmg;
+			if (GameScreen.getInstance().playsPlayer) GameScreen.getInstance().score += dmg;
 			GameScreen.getInstance().getFloatingTexts().add(new FloatingText(this.gc, Integer.toString(dmg), this.x, this.y));
 		}
 		MainApplication.schedule(() -> this.damage = true, 50);

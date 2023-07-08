@@ -10,6 +10,7 @@ import javafx.scene.effect.Glow;
 import java.util.*;
 
 import com.orangomango.gmtk23.MainApplication;
+import com.orangomango.gmtk23.ui.GameScreen;
 
 public class Player extends GameObject{
 	public static enum State{
@@ -47,6 +48,7 @@ public class Player extends GameObject{
 	private double pointAngle;
 	private volatile Point2D frameIndex = currentState.getStartPoint();
 	private static Image IMAGE = MainApplication.loadImage("player.png");
+	private static final Image ARROW_IMAGE = MainApplication.loadImage("arrow.png");
 	
 	public Player(GraphicsContext gc, double x, double y){
 		super(gc, x, y, 40, 40);
@@ -90,6 +92,21 @@ public class Player extends GameObject{
 	}
 	
 	@Override
+	public boolean move(double x, double y, boolean collision){
+		boolean output = super.move(x, y, collision);
+		if (x > 0){
+			setState(State.MOVING_RIGHT);
+		} else if (x < 0){
+			setState(State.MOVING_LEFT);
+		} else if (y > 0){
+			setState(State.MOVING_DOWN);
+		} else if (y < 0){
+			setState(State.MOVING_UP);
+		}
+		return output;
+	}
+	
+	@Override
 	public void render(){
 		gc.save();
 		if (!this.damage){
@@ -107,6 +124,10 @@ public class Player extends GameObject{
 		
 		Image gunImage = Bullet.gunImages.get(this.currentGun);
 		renderGun(gunImage, this.pointAngle);
+		
+		if (GameScreen.getInstance().playsPlayer){
+			gc.drawImage(ARROW_IMAGE, this.x-10, this.y-this.h/2-25, 20, 20);
+		}
 		
 		gc.restore();
 	}
