@@ -3,6 +3,7 @@ package com.orangomango.retoohs;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 import javafx.scene.image.Image;
 import javafx.scene.media.*;
 import javafx.animation.Animation;
@@ -48,6 +49,7 @@ public class MainApplication extends Application{
 
 		HomeScreen hs = new HomeScreen();
 		Scene scene = new Scene(hs.getLayout(), WIDTH, HEIGHT);
+		scene.setFill(Color.BLACK);
 		stage.setScene(scene);
 		stage.setResizable(false);
 		stage.setTitle("Retoohs by OrangoMango");
