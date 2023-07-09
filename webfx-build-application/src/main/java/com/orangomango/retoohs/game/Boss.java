@@ -1,7 +1,7 @@
 package com.orangomango.retoohs.game;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 
 import java.util.Random;
 
@@ -15,12 +15,28 @@ public class Boss extends GameObject{
 	private double speed;
 	private long lastSuper;
 	private Double fixedAngle;
+	private Image image = MainApplication.loadImage("boss_smash.png");
+	private int smashFrameIndex;
+	private boolean smash;
 
 	public Boss(GraphicsContext gc, double x, double y){
 		super(gc, x, y, 128, 128);
 		this.speed = SPEED;
 		this.hp = HEALTH;
 		this.lastSuper = System.currentTimeMillis();
+		startAnimation(3, 250);
+		startSmashAnimation(10, 150);
+	}
+	
+	private void startSmashAnimation(int frames, int time){
+		MainApplication.schedulePeriodic(() -> {
+			if (!GameScreen.getInstance().isPaused()){
+				this.smashFrameIndex++;
+				if (this.smashFrameIndex == frames){
+					this.smashFrameIndex = 0;
+				}
+			}
+		}, time);
 	}
 	
 	private void makeSuper(){
@@ -30,7 +46,10 @@ public class Boss extends GameObject{
 		this.hp += 50;
 		switch (n){
 			case 0:
-				for (int i = 0; i < 5; i++){
+				int amount = random.nextInt(2);
+				this.smash = true;
+				MainApplication.schedule(() -> this.smash = false, 1500);
+				for (int i = 0; i < 3+amount; i++){
 					Enemy e = new Enemy(this.gc, random.nextInt(MainApplication.WIDTH-200)+100, random.nextInt(MainApplication.HEIGHT-200)+100, GameScreen.getInstance().getPlayer(), 0);
 					GameScreen.getInstance().getGameObjects().add(e);
 				}
@@ -49,11 +68,10 @@ public class Boss extends GameObject{
 	
 	@Override
 	public void render(){
-		gc.setFill(Color.BLACK);
-		gc.fillOval(this.x-this.w/2, this.y-this.h/2, this.w, this.h);
 		Player player = GameScreen.getInstance().getPlayer();
 		double angle = this.fixedAngle != null ? this.fixedAngle : Math.atan2(player.getY()-this.y, player.getX()-this.x);
 		double distance = Math.sqrt(Math.pow(player.getX()-this.x, 2)+Math.pow(player.getY()-this.y, 2));
+		gc.drawImage(this.image, 1+(128+2)*(this.smash ? this.smashFrameIndex : this.frameIndex), 1, 128, 128, this.x-this.w/2, this.y-this.h/2, this.w, this.h);
 		if (distance < this.w/2+40){
 			if (this.attack){
 				player.damage(25);

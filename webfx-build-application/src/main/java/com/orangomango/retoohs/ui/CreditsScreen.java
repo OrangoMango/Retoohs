@@ -3,6 +3,7 @@ package com.orangomango.retoohs.ui;
 import javafx.scene.layout.StackPane;
 import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 import javafx.animation.*;
 import javafx.util.Duration;
 import javafx.scene.input.MouseButton;
@@ -18,6 +19,7 @@ public class CreditsScreen{
 	private double scroll;
 	private String credits;
 	private MediaPlayer mediaPlayer;
+	private Image background = MainApplication.loadImage("background.png");
 	
 	public CreditsScreen(){
 		this.mediaPlayer = MainApplication.playSound(MainApplication.MENU_BACKGROUND_MUSIC, true);
@@ -49,8 +51,7 @@ public class CreditsScreen{
 	
 	private void update(GraphicsContext gc){
 		gc.clearRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
-		gc.setFill(Color.YELLOW);
-		gc.fillRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
+		gc.drawImage(this.background, 0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
 		gc.setFill(Color.BLACK);
 		gc.save();
 		gc.setFont(GameScreen.FONT_30);

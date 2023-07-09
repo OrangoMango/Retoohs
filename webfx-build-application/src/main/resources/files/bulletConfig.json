@@ -262,5 +262,29 @@
 		},
 		"angles" : [0],
 		"screenShake" : true
+	},
+	"space_gun" : {
+		"audioName" : "space_gun.wav",
+		"imageName" : "normal_gun.png",
+		"speed" : 15,
+		"damage" : 40,
+		"ammo" : 5,
+		"ammoAmount" : 2,
+		"cooldown" : 500,
+		"maxDistance" : 800,
+		"rarity" : 1,
+		"goPast" : false,
+		"explode" : false,
+		"timing" : {
+			"amount" : 1,
+			"time" : 0
+		},
+		"distanceDamage" : {
+			"min" : 0,
+			"max" : 0,
+			"increment" : 0
+		},
+		"angles" : [0],
+		"screenShake" : true
 	}
 }

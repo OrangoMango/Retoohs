@@ -50,6 +50,8 @@ public class MainApplication extends Application{
 		Scene scene = new Scene(hs.getLayout(), WIDTH, HEIGHT);
 		stage.setScene(scene);
 		stage.setResizable(false);
+		stage.setTitle("Retoohs by OrangoMango");
+		stage.getIcons().add(loadImage("icon.png"));
 		stage.show();
 	}
 

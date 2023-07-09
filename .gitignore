@@ -21,6 +21,5 @@ gradle-app.setting
 .classpath
 
 
-
 # webfx
-target
+target/

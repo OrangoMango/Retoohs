@@ -59,6 +59,7 @@ public class GameScreen{
 	public boolean playsPlayer = true;
 	private Reverser reverser;
 	private List<MenuButton> pauseButtons = new ArrayList<>();
+	private int bossesKilled;
 	
 	private Image groundImage = MainApplication.loadImage("ground.png");
 	private Image[] stoneGroundImages = new Image[]{MainApplication.loadImage("ground_stone_0.png"), MainApplication.loadImage("ground_stone_1.png")};
@@ -196,13 +197,13 @@ public class GameScreen{
 		
 		this.startTime = System.currentTimeMillis();
 		
-		Image homeButtonImage = MainApplication.loadImage("warning.png");
+		Image homeButtonImage = MainApplication.loadImage("button_home.jpg");
 		this.pauseButtons.add(new MenuButton(gc, 420, 300, 64, 64, homeButtonImage, () -> {
 			quit();
 			HomeScreen hs = new HomeScreen();
 			MainApplication.stage.getScene().setRoot(hs.getLayout());
 		}));
-		Image resumeButtonImage = MainApplication.loadImage("warning.png");
+		Image resumeButtonImage = MainApplication.loadImage("button_resume.jpg");
 		this.pauseButtons.add(new MenuButton(gc, 520, 300, 64, 64, resumeButtonImage, () -> setPause(false)));
 		
 		this.loop = new Timeline(new KeyFrame(Duration.millis(1000.0/MainApplication.FPS), e -> update(gc)));
@@ -380,6 +381,8 @@ public class GameScreen{
 		// Render bonuspoint
 		this.bpoint1.render();
 		this.bpoint2.render();
+
+		long diff = System.currentTimeMillis()-this.startTime-this.pausedTime;
 		
 		// Render gameObjects
 		for (int i = 0; i < this.gameObjects.size(); i++){
@@ -400,7 +403,7 @@ public class GameScreen{
 					if (this.playsPlayer){
 						MainApplication.playSound(MainApplication.DEATH_SOUND, false);
 						quit();
-						GameOverScreen gos = new GameOverScreen();
+						GameOverScreen gos = new GameOverScreen(diff, this.score, this.bossesKilled);
 						MainApplication.stage.getScene().setRoot(gos.getLayout());
 						return;
 					} else {
@@ -421,6 +424,7 @@ public class GameScreen{
 				if (obj instanceof Boss){
 					this.currentBoss = null;
 					this.score += 400;
+					this.bossesKilled++;
 					this.bossExtraScore += this.score-this.lastBossScore;
 					changeMusic(MainApplication.BACKGROUND_MUSIC);
 				}
@@ -553,8 +557,8 @@ public class GameScreen{
 		
 		if ((this.keys.getOrDefault(KeyCode.Q, false) && this.player.getHP() < 90) || this.player.getHP() < 40){
 			// heal
-			long diff = System.currentTimeMillis()-this.lastHeal;
-			if (diff > 30000){
+			long hdiff = System.currentTimeMillis()-this.lastHeal;
+			if (hdiff > 30000){
 				MainApplication.playSound(MainApplication.HEAL_SOUND, false);
 				this.player.heal(60);
 				this.lastHeal = System.currentTimeMillis();
@@ -633,7 +637,6 @@ public class GameScreen{
 		// Time
 		gc.setFill(Color.BLACK);
 		gc.setFont(FONT_30);
-		long diff = System.currentTimeMillis()-this.startTime-this.pausedTime;
 		gc.fillText((diff/60000)+":"+(diff/1000%60), 20, MainApplication.HEIGHT-20);
 		
 		this.reverser.render();

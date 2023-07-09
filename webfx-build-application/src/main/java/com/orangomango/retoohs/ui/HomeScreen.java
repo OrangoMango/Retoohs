@@ -2,7 +2,6 @@ package com.orangomango.retoohs.ui;
 
 import javafx.scene.layout.StackPane;
 import javafx.scene.canvas.*;
-import javafx.scene.paint.Color;
 import javafx.scene.image.Image;
 import javafx.animation.*;
 import javafx.util.Duration;
@@ -17,6 +16,8 @@ public class HomeScreen{
 	private MediaPlayer mediaPlayer;
 	private Timeline loop;
 	private List<MenuButton> buttons = new ArrayList<>();
+	private Image background = MainApplication.loadImage("background.png");
+	private Image logo = MainApplication.loadImage("logo.png");
 	
 	public HomeScreen(){
 		this.mediaPlayer = MainApplication.playSound(MainApplication.MENU_BACKGROUND_MUSIC, true);
@@ -35,15 +36,15 @@ public class HomeScreen{
 			}
 		});
 		
-		Image playButtonImage = MainApplication.loadImage("warning.png"); //placeholder
-		MenuButton playButton = new MenuButton(gc, 425, 250, 150, 50, playButtonImage, () -> {
+		Image playButtonImage = MainApplication.loadImage("button_play.jpg"); //placeholder
+		MenuButton playButton = new MenuButton(gc, 425, 300, 150, 50, playButtonImage, () -> {
 			this.loop.stop();
 			if (this.mediaPlayer != null) this.mediaPlayer.stop();
 			GameScreen gs = new GameScreen();
 			MainApplication.stage.getScene().setRoot(gs.getLayout());
 		});
 		this.buttons.add(playButton);
-		Image creditsButtonImage = MainApplication.loadImage("warning.png"); //placeholder
+		Image creditsButtonImage = MainApplication.loadImage("button_credits.jpg"); //placeholder
 		MenuButton creditsButton = new MenuButton(gc, 425, 400, 150, 50, creditsButtonImage, () -> {
 			this.loop.stop();
 			if (this.mediaPlayer != null) this.mediaPlayer.stop();
@@ -62,8 +63,8 @@ public class HomeScreen{
 	
 	private void update(GraphicsContext gc){
 		gc.clearRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
-		gc.setFill(Color.LIME);
-		gc.fillRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
+		gc.drawImage(this.background, 0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
+		gc.drawImage(this.logo, 350, 150, 300, 100);
 		for (MenuButton mb : this.buttons){
 			mb.render();
 		}
