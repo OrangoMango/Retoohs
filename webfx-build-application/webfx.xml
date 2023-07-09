@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+	<resource-package>audio</resource-package>
+	<resource-package>images</resource-package>
+	<resource-package>files</resource-package>
+    </exported-packages>
+
+    <embed-resources>
+	<resource>files/bulletConfig.json</resource>
+	<resource>files/credits.txt</resource>
+    </embed-resources>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="javafx.application.Application">com.orangomango.retoohs.MainApplication</provider>
+    </providers>
+
+</project>
