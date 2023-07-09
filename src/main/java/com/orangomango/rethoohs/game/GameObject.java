@@ -1,11 +1,11 @@
-package com.orangomango.gmtk23.game;
+package com.orangomango.retoohs.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 
-import com.orangomango.gmtk23.ui.GameScreen;
-import com.orangomango.gmtk23.MainApplication;
+import com.orangomango.retoohs.ui.GameScreen;
+import com.orangomango.retoohs.MainApplication;
 
 public abstract class GameObject{
 	protected double x, y, w, h;

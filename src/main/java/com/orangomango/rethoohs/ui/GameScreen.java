@@ -1,4 +1,4 @@
-package com.orangomango.gmtk23.ui;
+package com.orangomango.retoohs.ui;
 
 import javafx.scene.layout.StackPane;
 import javafx.scene.canvas.*;
@@ -17,8 +17,8 @@ import javafx.geometry.Point2D;
 
 import java.util.*;
 
-import com.orangomango.gmtk23.MainApplication;
-import com.orangomango.gmtk23.game.*;
+import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.game.*;
 
 public class GameScreen{
 	private static GameScreen instance = null;
@@ -55,6 +55,7 @@ public class GameScreen{
 	public Enemy selectedEnemy;
 	public boolean playsPlayer = true;
 	private Reverser reverser;
+	private List<MenuButton> pauseButtons = new ArrayList<>();
 	
 	private Image groundImage = MainApplication.loadImage("ground.png");
 	private Image[] stoneGroundImages = new Image[]{MainApplication.loadImage("ground_stone_0.png"), MainApplication.loadImage("ground_stone_1.png")};
@@ -102,6 +103,10 @@ public class GameScreen{
 		return this.player;
 	}
 	
+	public Boss getCurrentBoss(){
+		return this.currentBoss;
+	}
+	
 	public StackPane getLayout(){
 		StackPane pane = new StackPane();
 		Canvas canvas = new Canvas(MainApplication.WIDTH, MainApplication.HEIGHT);
@@ -124,7 +129,13 @@ public class GameScreen{
 		Bullet.applyConfiguration("normal_gun", null, null, 0, 0, 0, this.player);
 		
 		EventHandler<MouseEvent> mouseEvent = e -> {
-			if (this.paused || (this.currentBoss == null && !this.playsPlayer)) return;
+			if (this.paused){
+				for (MenuButton mb : this.pauseButtons){
+					mb.click(e.getX(), e.getY());
+				}
+				return;
+			}
+			if (this.currentBoss == null && !this.playsPlayer) return;
 			if (e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY){
 				long diff = System.currentTimeMillis()-this.lastExplosion;
 				boolean exp = e.getButton() == MouseButton.SECONDARY && diff > 10000;
@@ -185,6 +196,15 @@ public class GameScreen{
 		}
 		
 		this.startTime = System.currentTimeMillis();
+		
+		Image homeButtonImage = MainApplication.loadImage("warning.png");
+		this.pauseButtons.add(new MenuButton(gc, 420, 300, 64, 64, homeButtonImage, () -> {
+			quit();
+			HomeScreen hs = new HomeScreen();
+			MainApplication.stage.getScene().setRoot(hs.getLayout());
+		}));
+		Image resumeButtonImage = MainApplication.loadImage("warning.png");
+		this.pauseButtons.add(new MenuButton(gc, 520, 300, 64, 64, resumeButtonImage, () -> setPause(false)));
 		
 		this.loop = new Timeline(new KeyFrame(Duration.millis(1000.0/MainApplication.FPS), e -> update(gc)));
 		this.loop.setCycleCount(Animation.INDEFINITE);
@@ -336,12 +356,15 @@ public class GameScreen{
 				gc.setFill(Color.BLACK);
 				gc.fillRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
 				gc.restore();
+				for (MenuButton mb : this.pauseButtons){
+					mb.render();
+				}
 			}
 			return;
 		}
 		
 		if (this.score < 0) this.score = 0;
-		if (this.score-this.bossExtraScore-this.lastBossScore >= BOSS_SCORE && this.currentBoss == null){
+		if (this.score-this.bossExtraScore-this.lastBossScore >= BOSS_SCORE && this.currentBoss == null && this.playsPlayer){
 			spawnBoss(gc);
 		}
 		

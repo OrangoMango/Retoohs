@@ -1,4 +1,4 @@
-package com.orangomango.gmtk23.game;
+package com.orangomango.retoohs.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -6,8 +6,8 @@ import javafx.scene.effect.Glow;
 
 import java.util.*;
 
-import com.orangomango.gmtk23.MainApplication;
-import com.orangomango.gmtk23.ui.GameScreen;
+import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.ui.GameScreen;
 
 public class Enemy extends GameObject{
 	public static final double SPEED = 3;

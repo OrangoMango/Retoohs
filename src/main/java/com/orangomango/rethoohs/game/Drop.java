@@ -1,4 +1,4 @@
-package com.orangomango.gmtk23.game;
+package com.orangomango.retoohs.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -6,8 +6,8 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.geometry.Rectangle2D;
 
-import com.orangomango.gmtk23.MainApplication;
-import com.orangomango.gmtk23.ui.GameScreen;
+import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.ui.GameScreen;
 
 public class Drop{
 	private GraphicsContext gc;
@@ -66,9 +66,9 @@ public class Drop{
 		if (thisRect.intersects(playerRect)){
 			if (this.rarity >= playerRarity || (GameScreen.getInstance().getKeys().getOrDefault(KeyCode.E, false)) && GameScreen.getInstance().playsPlayer){		
 				String gunName = Bullet.getRandomGun(this.rarity);
-				System.out.println(gunName);
 				MainApplication.playSound(MainApplication.DROP_SOUND, false);
 				player.setGun(gunName);
+				GameScreen.getInstance().getFloatingTexts().add(new FloatingText(this.gc, gunName.replace("_", " "), this.x-5, this.y));
 				this.exists = false;
 				if (GameScreen.getInstance().targetDrop == this){
 					GameScreen.getInstance().targetDrop = null;

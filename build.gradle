@@ -24,8 +24,8 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainModule = 'com.orangomango.gmtk'
-    mainClass = 'com.orangomango.gmtk23.MainApplication'
+    mainModule = 'com.orangomango.retoohs'
+    mainClass = 'com.orangomango.retoohs.MainApplication'
 }
 
 javafx {

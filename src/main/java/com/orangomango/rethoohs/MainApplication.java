@@ -1,4 +1,4 @@
-package com.orangomango.gmtk23;
+package com.orangomango.retoohs;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -7,9 +7,9 @@ import javafx.scene.image.Image;
 import javafx.scene.media.*;
 import javafx.animation.Animation;
 
-import com.orangomango.gmtk23.ui.HomeScreen;
-import com.orangomango.gmtk23.ui.GameScreen;
-import com.orangomango.gmtk23.game.Bullet;
+import com.orangomango.retoohs.ui.HomeScreen;
+import com.orangomango.retoohs.ui.GameScreen;
+import com.orangomango.retoohs.game.Bullet;
 
 public class MainApplication extends Application{
 	public static final int WIDTH = 1000;

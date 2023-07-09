@@ -1,4 +1,4 @@
-package com.orangomango.gmtk23.game;
+package com.orangomango.retoohs.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -9,8 +9,8 @@ import java.io.*;
 import java.util.*;
 import org.json.JSONObject;
 
-import com.orangomango.gmtk23.ui.GameScreen;
-import com.orangomango.gmtk23.MainApplication;
+import com.orangomango.retoohs.ui.GameScreen;
+import com.orangomango.retoohs.MainApplication;
 
 public class Bullet extends GameObject{
 	public static class ShooterConfig{

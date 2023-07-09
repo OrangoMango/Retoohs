@@ -1,4 +1,4 @@
-package com.orangomango.gmtk23.ui;
+package com.orangomango.retoohs.ui;
 
 import javafx.scene.layout.StackPane;
 import javafx.scene.canvas.*;
@@ -11,7 +11,7 @@ import javafx.scene.media.MediaPlayer;
 
 import java.io.*;
 
-import com.orangomango.gmtk23.MainApplication;
+import com.orangomango.retoohs.MainApplication;
 
 public class CreditsScreen{
 	private Timeline loop;

@@ -1,16 +1,16 @@
-package com.orangomango.gmtk23.game;
+package com.orangomango.retoohs.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 import java.util.Random;
 
-import com.orangomango.gmtk23.ui.GameScreen;
-import com.orangomango.gmtk23.MainApplication;
+import com.orangomango.retoohs.ui.GameScreen;
+import com.orangomango.retoohs.MainApplication;
 
 public class Boss extends GameObject{
 	private static final double SPEED = 1;
-	public static final int HEALTH = 1500;
+	public static final int HEALTH = 1000;
 	private boolean attack = true;
 	private double speed;
 	private long lastSuper;

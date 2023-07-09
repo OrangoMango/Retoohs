@@ -1,4 +1,4 @@
--- Game title --
+"Retoohs"
 Game made for the GMTK game jam 2023
 Theme: ROLES REVERSED
 Time: 48h
@@ -14,4 +14,6 @@ Andrea Pintus (Dado14)
 freesound.org
 
 Game made using Java and the JavaFX framework
-https://this.is.a.link/to-the-game
+https://orangomango.itch.io/retoohs
+
+Version 1.0, 09/07/2023

@@ -1,4 +1,4 @@
-package com.orangomango.gmtk23.ui;
+package com.orangomango.retoohs.ui;
 
 import javafx.scene.layout.StackPane;
 import javafx.scene.canvas.*;
@@ -7,7 +7,7 @@ import javafx.animation.*;
 import javafx.util.Duration;
 import javafx.scene.media.MediaPlayer;
 
-import com.orangomango.gmtk23.MainApplication;
+import com.orangomango.retoohs.MainApplication;
 
 public class GameOverScreen{
 	private MediaPlayer mediaPlayer;

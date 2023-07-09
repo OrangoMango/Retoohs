@@ -1,4 +1,4 @@
-package com.orangomango.gmtk23.game;
+package com.orangomango.retoohs.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -7,8 +7,8 @@ import javafx.geometry.Rectangle2D;
 
 import java.util.Random;
 
-import com.orangomango.gmtk23.MainApplication;
-import com.orangomango.gmtk23.ui.GameScreen;
+import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.ui.GameScreen;
 
 public class BonusPoint{
 	private GraphicsContext gc;

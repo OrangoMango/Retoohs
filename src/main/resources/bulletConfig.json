@@ -123,7 +123,7 @@
 		"audioName" : "machine_gun.wav",
 		"imageName" : "normal_gun.png",
 		"speed" : 17,
-		"damage" : 3,
+		"damage" : 5,
 		"ammo" : 100,
 		"ammoAmount" : 2,
 		"cooldown" : 75,

@@ -1,11 +1,11 @@
-package com.orangomango.gmtk23.game;
+package com.orangomango.retoohs.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.geometry.Point2D;
 
-import com.orangomango.gmtk23.ui.GameScreen;
-import com.orangomango.gmtk23.MainApplication;
+import com.orangomango.retoohs.ui.GameScreen;
+import com.orangomango.retoohs.MainApplication;
 
 public class Explosion{
 	private GraphicsContext gc;

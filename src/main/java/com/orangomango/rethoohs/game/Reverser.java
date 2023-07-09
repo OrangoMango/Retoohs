@@ -1,10 +1,10 @@
-package com.orangomango.gmtk23.game;
+package com.orangomango.retoohs.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-import com.orangomango.gmtk23.MainApplication;
-import com.orangomango.gmtk23.ui.GameScreen;
+import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.ui.GameScreen;
 
 public class Reverser{
 	private GraphicsContext gc;
@@ -46,10 +46,10 @@ public class Reverser{
 			gc.drawImage(this.image, MainApplication.WIDTH-100, MainApplication.HEIGHT-100, 64, 64);
 		}
 		long diff = System.currentTimeMillis()-this.lastTime-GameScreen.getInstance().getPausedTime();
-		if (diff > 15000 && this.startAllowed){
+		if (diff > 25000 && this.startAllowed){
 			this.makeSound = true;
 		}
-		if (diff > 20000 && this.startAllowed){
+		if (diff > 30000 && this.startAllowed && GameScreen.getInstance().getCurrentBoss() == null){
 			start();
 		}
 	}

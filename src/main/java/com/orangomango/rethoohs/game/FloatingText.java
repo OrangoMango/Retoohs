@@ -1,9 +1,9 @@
-package com.orangomango.gmtk23.game;
+package com.orangomango.retoohs.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import com.orangomango.gmtk23.ui.GameScreen;
+import com.orangomango.retoohs.ui.GameScreen;
 
 public class FloatingText{
 	private String text;

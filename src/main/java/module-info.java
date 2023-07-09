@@ -1,7 +1,7 @@
-module com.orangomango.gmtk{
+module com.orangomango.retoohs{
 	requires javafx.controls;
 	requires javafx.media;
 	requires org.json;
 
-	exports com.orangomango.gmtk23;
+	exports com.orangomango.retoohs;
 }
