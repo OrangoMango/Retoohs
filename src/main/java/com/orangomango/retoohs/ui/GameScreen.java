@@ -19,6 +19,7 @@ import java.util.*;
 
 import com.orangomango.retoohs.MainApplication;
 import com.orangomango.retoohs.game.*;
+import com.orangomango.retoohs.ui.UIBar;
 
 public class GameScreen{
 	private static GameScreen instance = null;
@@ -57,6 +58,7 @@ public class GameScreen{
 	private Reverser reverser;
 	private List<MenuButton> pauseButtons = new ArrayList<>();
 	private int bossesKilled;
+	private UIBar healthBar, exBar, restoreBar, bossBar;
 	
 	private Image groundImage = MainApplication.loadImage("ground.png");
 	private Image[] stoneGroundImages = new Image[]{MainApplication.loadImage("ground_stone_0.png"), MainApplication.loadImage("ground_stone_1.png")};
@@ -206,6 +208,16 @@ public class GameScreen{
 		}));
 		Image resumeButtonImage = MainApplication.loadImage("button_resume.jpg");
 		this.pauseButtons.add(new MenuButton(gc, 520, 300, 64, 64, resumeButtonImage, () -> setPause(false)));
+
+		// UI bars
+		Image hpImage = MainApplication.loadImage("hpbar.png");
+		Image exImage = MainApplication.loadImage("exbar.png");
+		Image restoreImage = MainApplication.loadImage("restorebar.png");
+		Image bossbarImage = MainApplication.loadImage("bossbar.png");
+		this.healthBar = new UIBar(gc, 20, 60, 200, 30, hpImage, Color.GREEN, 23, 5, 175, 20);
+		this.exBar = new UIBar(gc, 20, 95, 200, 30, exImage, Color.YELLOW, 23, 5, 175, 20);
+		this.restoreBar = new UIBar(gc, 20, 130, 200, 30, restoreImage, Color.CYAN, 23, 5, 175, 20);
+		this.bossBar = new UIBar(gc, 20, 165, 200, 30, bossbarImage, Color.PURPLE, 23, 5, 175, 20);
 		
 		this.loop = new Timeline(new KeyFrame(Duration.millis(1000.0/MainApplication.FPS), e -> update(gc)));
 		this.loop.setCycleCount(Animation.INDEFINITE);
@@ -258,7 +270,7 @@ public class GameScreen{
 		this.gameRunning = false;
 		MainApplication.threadsRunning = false;
 		MainApplication.schedule(() -> MainApplication.threadsRunning = true, 500);
-		MainApplication.schedule(() -> GameScreen.instance = null, 500);
+		GameScreen.instance = null;
 		this.player.stopAnimation();
 		if (this.mediaPlayer != null){
 			this.mediaPlayer.stop();
@@ -413,6 +425,8 @@ public class GameScreen{
 						this.reverser.allowStart();
 						this.score += 250;
 						tempstop(gc.getCanvas());
+						this.player.setInvulnerable(true);
+						MainApplication.schedule(() -> this.player.setInvulnerable(false), 1500);
 					}
 				}
 				i--;
@@ -518,15 +532,21 @@ public class GameScreen{
 				}
 			}
 			if (this.selectedEnemy != null){
+				Point2D movement = new Point2D(0, 0);
 				if (this.keys.getOrDefault(KeyCode.W, false)){
-					this.selectedEnemy.move(0, -Enemy.SPEED*1.2, false);
-				} else if (this.keys.getOrDefault(KeyCode.A, false)){
-					this.selectedEnemy.move(-Enemy.SPEED*1.2, 0, false);
-				} else if (this.keys.getOrDefault(KeyCode.S, false)){
-					this.selectedEnemy.move(0, Enemy.SPEED*1.2, false);
-				} else if (this.keys.getOrDefault(KeyCode.D, false)){
-					this.selectedEnemy.move(Enemy.SPEED*1.2, 0, false);
+					movement = movement.add(0, -1);
 				}
+				if (this.keys.getOrDefault(KeyCode.A, false)){
+					movement = movement.add(-1, 0);
+				}
+				if (this.keys.getOrDefault(KeyCode.S, false)){
+					movement = movement.add(0, 1);
+				}
+				if (this.keys.getOrDefault(KeyCode.D, false)){
+					movement = movement.add(1, 0);
+				}
+				movement = movement.normalize().multiply(Enemy.SPEED*1.2);
+				this.selectedEnemy.move(movement.getX(), movement.getY(), false);
 				
 				if (this.keys.getOrDefault(KeyCode.UP, false)){
 					this.selectedEnemy = selectEnemy(this.selectedEnemy, false, true);
@@ -543,15 +563,27 @@ public class GameScreen{
 				}
 			}
 		} else {
+			boolean idle = true;
+			Point2D movement = new Point2D(0, 0);
 			if (this.keys.getOrDefault(KeyCode.W, false)){
-				this.player.move(0, -playerSpeed, false);
-			} else if (this.keys.getOrDefault(KeyCode.A, false)){
-				this.player.move(-playerSpeed, 0, false);
-			} else if (this.keys.getOrDefault(KeyCode.S, false)){
-				this.player.move(0, playerSpeed, false);
-			} else if (this.keys.getOrDefault(KeyCode.D, false)){
-				this.player.move(playerSpeed, 0, false);
-			} else {
+				movement = movement.add(0, -1);
+				idle = false;
+			}
+			if (this.keys.getOrDefault(KeyCode.A, false)){
+				movement = movement.add(-1, 0);
+				idle = false;
+			}
+			if (this.keys.getOrDefault(KeyCode.S, false)){
+				movement = movement.add(0, 1);
+				idle = false;
+			}
+			if (this.keys.getOrDefault(KeyCode.D, false)){
+				movement = movement.add(1, 0);
+				idle = false;
+			}
+			movement = movement.normalize().multiply(playerSpeed);
+			this.player.move(movement.getX(), movement.getY(), false);
+			if (idle){
 				this.player.setState(Player.State.IDLE);
 			}
 		}
@@ -587,19 +619,16 @@ public class GameScreen{
 		gc.setStroke(Color.BLACK);
 		
 		// HP bar
-		gc.setFill(Color.GREEN);
-		gc.fillRect(20, 60, 200*this.player.getHP()/100.0, 30);
-		gc.strokeRect(20, 60, 200, 30);
+		this.healthBar.setProgress(this.player.getHP()/100.0);
+		this.healthBar.render();
 		
 		// Explosion bar
-		gc.setFill(Color.YELLOW);
-		gc.fillRect(20, 100, 200*Math.min(1, (System.currentTimeMillis()-this.lastExplosion)/10000.0), 20);
-		gc.strokeRect(20, 100, 200, 20);
+		this.exBar.setProgress(Math.min(1, (System.currentTimeMillis()-this.lastExplosion)/10000.0));
+		this.exBar.render();
 		
 		// Heal bar
-		gc.setFill(Color.CYAN);
-		gc.fillRect(20, 130, 200*Math.min(1, (System.currentTimeMillis()-this.lastHeal)/30000.0), 20);
-		gc.strokeRect(20, 130, 200, 20);
+		this.restoreBar.setProgress(Math.min(1, (System.currentTimeMillis()-this.lastHeal)/30000.0));
+		this.restoreBar.render();
 		
 		// Ammo
 		int an = Bullet.configs.get(this.player).getAmmoAmount();
@@ -623,9 +652,8 @@ public class GameScreen{
 			gc.strokeRect(400, 40, 450, 40);
 		} else {
 			// Boss bar
-			gc.setFill(Color.PURPLE);
-			gc.fillRect(20, 160, 200*((this.score-this.bossExtraScore)%BOSS_SCORE/(double)(BOSS_SCORE)), 20);
-			gc.strokeRect(20, 160, 200, 20);
+			this.bossBar.setProgress(((this.score-this.bossExtraScore)%BOSS_SCORE/(double)(BOSS_SCORE)));
+			this.bossBar.render();
 		}
 		
 		gc.setGlobalAlpha(1);

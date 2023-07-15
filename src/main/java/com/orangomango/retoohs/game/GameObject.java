@@ -130,5 +130,9 @@ public abstract class GameObject{
 		return this.h;
 	}
 	
+	public void setInvulnerable(boolean v){
+		this.invulnerable = v;
+	}
+	
 	public abstract void render();
 }

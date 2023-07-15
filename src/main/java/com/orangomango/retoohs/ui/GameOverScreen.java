@@ -16,12 +16,15 @@ public class GameOverScreen{
 	private long time;
 	private int score;
 	private int bossesKilled;
+	private boolean clickAllowed;
 	
 	public GameOverScreen(long time, int s, int b){
 		this.time = time;
 		this.score = s;
 		this.bossesKilled = b;
-		MainApplication.schedule(() -> this.mediaPlayer = MainApplication.playSound(MainApplication.GAMEOVER_BACKGROUND_MUSIC, true), 500);
+		MainApplication.audioPlayed = false;
+		this.mediaPlayer = MainApplication.playSound(MainApplication.GAMEOVER_BACKGROUND_MUSIC, true);
+		MainApplication.schedule(() -> this.clickAllowed = true, 2000);
 	}
 
 	public StackPane getLayout(){
@@ -30,7 +33,7 @@ public class GameOverScreen{
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		
 		canvas.setOnMousePressed(e -> {
-			if (e.getButton() == MouseButton.PRIMARY){
+			if (e.getButton() == MouseButton.PRIMARY && this.clickAllowed){
 				if (this.mediaPlayer != null) this.mediaPlayer.stop();
 				HomeScreen hs = new HomeScreen();
 				MainApplication.stage.getScene().setRoot(hs.getLayout());

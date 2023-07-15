@@ -20,6 +20,7 @@ public class Enemy extends GameObject{
 	private boolean shooter, attack = true;
 	private int type;
 	private int dmg;
+	private int overrideDirection = -1;
 	private List<Bullet> bullets = new ArrayList<>();
 	
 	public Enemy(GraphicsContext gc, double x, double y, GameObject target, int type){
@@ -46,6 +47,23 @@ public class Enemy extends GameObject{
 	}
 	
 	@Override
+	public boolean move(double x, double y, boolean collision){
+		boolean output = super.move(x, y, collision);
+		if (x > 0){
+			this.overrideDirection = 2;
+		} else if (x < 0){
+			this.overrideDirection = 3;
+		} else if (y > 0){
+			this.overrideDirection = 0;
+		} else if (y < 0){
+			this.overrideDirection = 1;
+		} else {
+			this.overrideDirection = -1;
+		}
+		return output;
+	}
+	
+	@Override
 	public void render(){
 		gc.save();
 		gc.setGlobalAlpha(this.alpha);
@@ -66,6 +84,10 @@ public class Enemy extends GameObject{
 		else if (angle <= -Math.PI/3 && angle > -2*Math.PI/3) direction = 1;
 		else if (angle >= Math.PI/3 && angle < 2*Math.PI/3) direction = 0;
 		else direction = 3;
+		
+		if (this.overrideDirection >= 0){
+			direction = this.overrideDirection;
+		}
 		
 		gc.drawImage(IMAGE, 1+(SIZE+2)*this.frameIndex, 1+(SIZE+2)*direction, SIZE, SIZE, this.x-this.w/2, this.y-this.h/2, this.w, this.h);
 		
