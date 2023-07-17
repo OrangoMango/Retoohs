@@ -10,12 +10,12 @@ import com.orangomango.retoohs.MainApplication;
 
 public class Boss extends GameObject{
 	private static final double SPEED = 1;
-	public static final int HEALTH = 1000;
+	public static final int HEALTH = 850;
 	private boolean attack = true;
 	private double speed;
 	private long lastSuper;
 	private Double fixedAngle;
-	private Image image = MainApplication.loadImage("boss_smash.png");
+	private Image image = MainApplication.assetLoader.getImage("boss_smash.png");
 	private int smashFrameIndex;
 	private boolean smash;
 
@@ -44,6 +44,7 @@ public class Boss extends GameObject{
 		int n = random.nextInt(2);
 		MainApplication.playSound(MainApplication.BOSSSUPER_SOUND, false);
 		this.hp += 50;
+		if (this.hp > HEALTH) this.hp = HEALTH;
 		switch (n){
 			case 0:
 				int amount = random.nextInt(2);
@@ -72,6 +73,7 @@ public class Boss extends GameObject{
 		double angle = this.fixedAngle != null ? this.fixedAngle : Math.atan2(player.getY()-this.y, player.getX()-this.x);
 		double distance = Math.sqrt(Math.pow(player.getX()-this.x, 2)+Math.pow(player.getY()-this.y, 2));
 		gc.drawImage(this.image, 1+(128+2)*(this.smash ? this.smashFrameIndex : this.frameIndex), 1, 128, 128, this.x-this.w/2, this.y-this.h/2, this.w, this.h);
+
 		if (distance < this.w/2+40){
 			if (this.attack){
 				player.damage(25);

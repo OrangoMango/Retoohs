@@ -26,7 +26,7 @@ public class GameScreen{
 	public static final Font FONT_45 = Font.loadFont(GameScreen.class.getResourceAsStream("/main_font.ttf"), 45);
 	public static final Font FONT_30 = Font.loadFont(GameScreen.class.getResourceAsStream("/main_font.ttf"), 30);
 	public static final Font FONT_15 = Font.loadFont(GameScreen.class.getResourceAsStream("/main_font.ttf"), 15);
-	private static final int BOSS_SCORE = 2000;
+	private static final int BOSS_SCORE = 1500;
 	
 	private List<GameObject> gameObjects = new ArrayList<>();
 	private List<FloatingText> fTexts = new ArrayList<>();
@@ -60,10 +60,10 @@ public class GameScreen{
 	private int bossesKilled;
 	private UIBar healthBar, exBar, restoreBar, bossBar;
 	
-	private Image groundImage = MainApplication.loadImage("ground.png");
-	private Image[] stoneGroundImages = new Image[]{MainApplication.loadImage("ground_stone_0.png"), MainApplication.loadImage("ground_stone_1.png")};
+	private Image groundImage = MainApplication.assetLoader.getImage("ground.png");
+	private Image[] stoneGroundImages = new Image[]{MainApplication.assetLoader.getImage("ground_stone_0.png"), MainApplication.assetLoader.getImage("ground_stone_1.png")};
 	private int[][] groundPattern;
-	private Image reverseImage = MainApplication.loadImage("reverse.png");
+	private Image reverseImage = MainApplication.assetLoader.getImage("reverse.png");
 	private volatile int reverseIndex = 0;
 	
 	public GameScreen(){
@@ -119,6 +119,11 @@ public class GameScreen{
 				setPause(!this.paused);
 				if (this.paused){
 					this.pausedImage = canvas.snapshot(null, new WritableImage(MainApplication.WIDTH, MainApplication.HEIGHT));
+					this.bpoint1.resetPausedTime();
+					this.bpoint2.resetPausedTime();
+					for (int i = 0; i < this.drops.size(); i++){
+						this.drops.get(i).resetPausedTime();
+					}
 				}
 			} else {
 				this.keys.put(e.getCode(), true);
@@ -163,12 +168,12 @@ public class GameScreen{
 				while (this.gameRunning){
 					if (this.paused) continue;
 					int type = 0;
-					if (this.score > 500){
+					/*if (this.score > 500){
 						int delta = this.score-500;
 						int n = delta/1000;
 						type = random.nextInt(n+1);
 					}
-					if (type > 4) type = 4;
+					if (type > 4) type = 4;*/
 					Enemy e = new Enemy(gc, random.nextInt(MainApplication.WIDTH-200)+100, random.nextInt(MainApplication.HEIGHT-200)+100, this.player, type);
 					if (this.selectedEnemy == null && !this.playsPlayer){
 						this.selectedEnemy = e;
@@ -200,20 +205,20 @@ public class GameScreen{
 		
 		this.startTime = System.currentTimeMillis();
 		
-		Image homeButtonImage = MainApplication.loadImage("button_home.jpg");
+		Image homeButtonImage = MainApplication.assetLoader.getImage("button_home.jpg");
 		this.pauseButtons.add(new MenuButton(gc, 420, 300, 64, 64, homeButtonImage, () -> {
 			quit();
 			HomeScreen hs = new HomeScreen();
 			MainApplication.stage.getScene().setRoot(hs.getLayout());
 		}));
-		Image resumeButtonImage = MainApplication.loadImage("button_resume.jpg");
+		Image resumeButtonImage = MainApplication.assetLoader.getImage("button_resume.jpg");
 		this.pauseButtons.add(new MenuButton(gc, 520, 300, 64, 64, resumeButtonImage, () -> setPause(false)));
 
 		// UI bars
-		Image hpImage = MainApplication.loadImage("hpbar.png");
-		Image exImage = MainApplication.loadImage("exbar.png");
-		Image restoreImage = MainApplication.loadImage("restorebar.png");
-		Image bossbarImage = MainApplication.loadImage("bossbar.png");
+		Image hpImage = MainApplication.assetLoader.getImage("hpbar.png");
+		Image exImage = MainApplication.assetLoader.getImage("exbar.png");
+		Image restoreImage = MainApplication.assetLoader.getImage("restorebar.png");
+		Image bossbarImage = MainApplication.assetLoader.getImage("bossbar.png");
 		this.healthBar = new UIBar(gc, 20, 60, 200, 30, hpImage, Color.GREEN, 23, 5, 175, 20);
 		this.exBar = new UIBar(gc, 20, 95, 200, 30, exImage, Color.YELLOW, 23, 5, 175, 20);
 		this.restoreBar = new UIBar(gc, 20, 130, 200, 30, restoreImage, Color.CYAN, 23, 5, 175, 20);
@@ -362,7 +367,7 @@ public class GameScreen{
 		if (this.pausedImage != null){
 			gc.drawImage(this.pausedImage, 0, 0);
 			if (this.tempStopped){
-				gc.drawImage(this.reverseImage, 1+66*this.reverseIndex, 1, 64, 64, MainApplication.WIDTH/2-64, MainApplication.HEIGHT/2-64, 128, 128);
+				gc.drawImage(this.reverseImage, 1+66*this.reverseIndex, 1, 64, 64, MainApplication.WIDTH/2-100, MainApplication.HEIGHT/2-100, 200, 200);
 			} else {
 				gc.save();
 				gc.setGlobalAlpha(0.6);
@@ -433,7 +438,7 @@ public class GameScreen{
 				if (!this.playsPlayer){
 					this.score -= 5;
 				}
-				if (obj instanceof Enemy && Math.random() > 0.85){ // 85%
+				if (obj instanceof Enemy && Math.random() > 0.75){ // 25%
 					this.drops.add(new Drop(gc, obj.getX(), obj.getY()));
 				}
 				if (obj instanceof Boss){

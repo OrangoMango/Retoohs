@@ -16,7 +16,10 @@ public class BonusPoint{
 	private long startTime;
 	private volatile int extraY;
 	private boolean forward = true;
-	private Image image = MainApplication.loadImage("bonusPoint.png");
+	private Image image = MainApplication.assetLoader.getImage("bonusPoint.png");
+	private int localPausedTime;
+	private double radius = 15;
+
 	private static final double SIZE = 20;
 	private static final int MAXTIME = 30000;
 	
@@ -31,6 +34,8 @@ public class BonusPoint{
 					this.forward = !this.forward;
 				}
 			}
+			this.radius += 2;
+			if (this.radius > 55) this.radius = 15;
 		}, 50);
 	}
 	
@@ -51,6 +56,10 @@ public class BonusPoint{
 		this.y = random.nextInt(MainApplication.HEIGHT-200)+100;
 		this.startTime = System.currentTimeMillis();
 	}
+
+	public void resetPausedTime(){
+		this.localPausedTime = GameScreen.getInstance().getPausedTime();
+	}
 	
 	public void render(){
 		gc.save();
@@ -59,7 +68,7 @@ public class BonusPoint{
 		Player player = GameScreen.getInstance().getPlayer();
 		Rectangle2D thisRect = new Rectangle2D(this.x-SIZE/2, this.y-SIZE/2, SIZE, SIZE);
 		Rectangle2D playerRect = new Rectangle2D(player.getX()-player.getWidth()/2, player.getY()-player.getHeight()/2, player.getWidth(), player.getHeight());
-		long diff = System.currentTimeMillis()-this.startTime-GameScreen.getInstance().getPausedTime();
+		long diff = System.currentTimeMillis()-this.startTime-(GameScreen.getInstance().getPausedTime()-this.localPausedTime);
 		if (thisRect.intersects(playerRect)){
 			GameScreen.getInstance().score += 50*(GameScreen.getInstance().playsPlayer ? 1 : -1);
 			player.heal(10);
@@ -76,5 +85,10 @@ public class BonusPoint{
 		gc.fillRect(this.x-SIZE/2, this.y+SIZE/2+5, SIZE*(1-(double)diff/MAXTIME), 7);
 		gc.strokeRect(this.x-SIZE/2, this.y+SIZE/2+5, SIZE, 7);
 		gc.restore();
+
+		if (diff > MAXTIME-7500 && GameScreen.getInstance().playsPlayer){
+			gc.setStroke(Color.ORANGE);
+			gc.strokeOval(this.x-this.radius, this.y-this.radius+7, this.radius*2, this.radius*2);
+		}
 	}
 }

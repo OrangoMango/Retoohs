@@ -12,7 +12,7 @@ import java.util.*;
 import com.orangomango.retoohs.MainApplication;
 import com.orangomango.retoohs.ui.GameScreen;
 
-public class Player extends GameObject{
+public class Player extends GameObject implements GunObject{
 	public static enum State{
 		IDLE(new Point2D(2, 0), 2),
 		MOVING_UP(new Point2D(0, 1), 2),
@@ -47,8 +47,8 @@ public class Player extends GameObject{
 	private Timeline animation;
 	private double pointAngle;
 	private volatile Point2D frameIndex = currentState.getStartPoint();
-	private static Image IMAGE = MainApplication.loadImage("player.png");
-	private static final Image ARROW_IMAGE = MainApplication.loadImage("arrow.png");
+	private static Image IMAGE = MainApplication.assetLoader.getImage("player.png");
+	private static final Image ARROW_IMAGE = MainApplication.assetLoader.getImage("arrow.png");
 	
 	public Player(GraphicsContext gc, double x, double y){
 		super(gc, x, y, 40, 40);
@@ -73,6 +73,7 @@ public class Player extends GameObject{
 		this.frameIndex = this.currentState.getStartPoint();
 	}
 	
+	@Override
 	public void setGun(String name){
 		Bullet.configs.remove(this);
 		Bullet.applyConfiguration(name, null, null, 0, 0, 0, this);
@@ -83,6 +84,7 @@ public class Player extends GameObject{
 		this.animation.stop();
 	}
 	
+	@Override
 	public String getCurrentGun(){
 		return this.currentGun;
 	}

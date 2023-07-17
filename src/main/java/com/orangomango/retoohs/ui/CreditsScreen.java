@@ -19,7 +19,7 @@ public class CreditsScreen{
 	private double scroll;
 	private String credits;
 	private MediaPlayer mediaPlayer;
-	private Image background = MainApplication.loadImage("background.png");
+	private Image background = MainApplication.assetLoader.getImage("background.png");
 	
 	public CreditsScreen(){
 		this.mediaPlayer = MainApplication.playSound(MainApplication.MENU_BACKGROUND_MUSIC, true);

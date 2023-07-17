@@ -28,8 +28,6 @@ public class MenuButton{
 	}
 	
 	public void render(){
-		gc.setStroke(javafx.scene.paint.Color.RED);
-		gc.strokeRect(this.x, this.y, this.w, this.h);
 		gc.drawImage(this.image, this.x, this.y, this.w, this.h);
 	}
 }

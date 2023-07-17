@@ -16,4 +16,4 @@ freesound.org
 Game made using Java and the JavaFX framework
 https://orangomango.itch.io/retoohs
 
-Version 1.0, 09/07/2023
+Post-jam update version 2.0

@@ -36,6 +36,15 @@ public class MainApplication extends Application{
 	public static AudioClip BOSSSUPER_SOUND;
 	public static AudioClip WARNING_SOUND;
 	public static AudioClip SWOOSH_SOUND;
+	public static double musicVolume = 1;
+	public static double sfxVolume = 1;
+
+	public static AssetLoader assetLoader;
+
+	static {
+		assetLoader = new AssetLoader();
+		assetLoader.loadImages();
+	}
 	
 	@Override
 	public void start(Stage stage){
@@ -48,7 +57,7 @@ public class MainApplication extends Application{
 		stage.setScene(scene);
 		stage.setResizable(false);
 		stage.setTitle("Retoohs by OrangoMango");
-		stage.getIcons().add(loadImage("icon.png"));
+		stage.getIcons().add(assetLoader.getImage("icon.png"));
 		stage.show();
 	}
 	
@@ -58,7 +67,7 @@ public class MainApplication extends Application{
 		BACKGROUND_MUSIC = new Media(MainApplication.class.getResource("/audio/background.wav").toExternalForm());
 		MENU_BACKGROUND_MUSIC = new Media(MainApplication.class.getResource("/audio/menu_background.wav").toExternalForm());
 		GAMEOVER_BACKGROUND_MUSIC = new Media(MainApplication.class.getResource("/audio/gameover_background.wav").toExternalForm());
-		BOSS_BACKGROUND_MUSIC = new Media(MainApplication.class.getResource("/audio/boss_battle.wav").toExternalForm());
+		BOSS_BACKGROUND_MUSIC = new Media(MainApplication.class.getResource("/audio/boss_battle_background.wav").toExternalForm());
 		DEATH_SOUND = new AudioClip(MainApplication.class.getResource("/audio/death.wav").toExternalForm());
 		DROP_SOUND = new AudioClip(MainApplication.class.getResource("/audio/drop.wav").toExternalForm());
 		EXPLOSION_SOUND = new AudioClip(MainApplication.class.getResource("/audio/explosion.wav").toExternalForm());
@@ -77,6 +86,7 @@ public class MainApplication extends Application{
 		audioPlayed = true;
 		schedule(() -> audioPlayed = false, 50);
 		MediaPlayer player = new MediaPlayer(media);
+		player.setVolume(musicVolume);
 		if (rep) player.setCycleCount(Animation.INDEFINITE);
 		else player.setOnEndOfMedia(() -> player.dispose());
 		player.play();
@@ -87,6 +97,7 @@ public class MainApplication extends Application{
 		if (audioPlayed) return;
 		audioPlayed = true;
 		schedule(() -> audioPlayed = false, 50);
+		player.setVolume(sfxVolume);
 		if (rep) player.setCycleCount(Animation.INDEFINITE);
 		player.play();
 	}
@@ -115,10 +126,6 @@ public class MainApplication extends Application{
 		});
 		loop.setDaemon(true);
 		loop.start();
-	}
-	
-	public static Image loadImage(String name){
-		return new Image(MainApplication.class.getResourceAsStream("/images/"+name));
 	}
 	
 	public static void main(String[] args){

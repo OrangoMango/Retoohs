@@ -8,7 +8,7 @@ import com.orangomango.retoohs.ui.GameScreen;
 
 public class Reverser{
 	private GraphicsContext gc;
-	private Image image = MainApplication.loadImage("warning.png");
+	private Image image = MainApplication.assetLoader.getImage("warning.png");
 	private volatile boolean blink;
 	private long lastTime;
 	private boolean startAllowed = true;
@@ -20,7 +20,7 @@ public class Reverser{
 		MainApplication.schedulePeriodic(() -> {
 			if (!GameScreen.getInstance().isPaused()){
 				this.blink = !this.blink;
-				if (this.blink && this.makeSound){
+				if (this.blink && this.makeSound && GameScreen.getInstance().getCurrentBoss() == null){
 					MainApplication.playSound(MainApplication.WARNING_SOUND, false);
 				}
 			}

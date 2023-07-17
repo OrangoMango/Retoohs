@@ -76,7 +76,7 @@ public class Bullet extends GameObject{
 	private int dmg;
 	private JSONObject config;
 	private Point2D startPos;
-	private static final Image IMAGE = MainApplication.loadImage("bullet.png");
+	private static final Image IMAGE = MainApplication.assetLoader.getImage("bullet.png");
 
 	private static JSONObject bulletConfig;
 	public static Map<GameObject, ShooterConfig> configs = new HashMap<>();
@@ -95,7 +95,7 @@ public class Bullet extends GameObject{
 			Iterator<String> iterator = bulletConfig.keys();
 			while (iterator.hasNext()){
 				String key = iterator.next();
-				gunImages.put(key, MainApplication.loadImage(getBulletConfig(key).getString("imageName")));
+				gunImages.put(key, MainApplication.assetLoader.getImage(getBulletConfig(key).getString("imageName")));
 			}
 		} catch (IOException ex){
 			ex.printStackTrace();
