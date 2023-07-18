@@ -1,0 +1,54 @@
+{
+	"timestamps" : [
+		{
+			"time" : 1000,
+			"text" : "Collect the blue points to earn score.\nIf you don't collect them in time,\nyou also lose some score...",
+			"command" : "finish_with_bonuspoint"
+		},
+		{
+			"time" : 1000,
+			"text" : "Defeat the zombies to earn score\nand collect their drops",
+			"command" : "summon_zombie 1"
+		},
+		{
+			"time" : 1000,
+			"text" : "Use Q to restore your health and\nRMB to shoot explosions\nWarning: they damage also the player",
+			"command" : "summon_zombie 4"
+		},
+		{
+			"time" : 1000,
+			"text" : "Drops have different rarities and contain\ndifferent types of guns.\nCommon (50%), Epic (40%) and Legendary (10%)",
+			"command" : "stop_after 2000"
+		},
+		{
+			"time" : 1000,
+			"text" : "Hey watch out, roles are getting reversed!\nBe sure to not have an OP player :)",
+			"command" : "trigger_reverser"
+		},
+		{
+			"time" : 2000,
+			"text" : "Now you play as the zombies, defeat the player\nto earn score and don't let the player kill you.\nBonus points are now reversed,\nif you distract the player you earn score",
+			"command" : "stop_after 2000"
+		},
+		{
+			"time" : 500,
+			"text" : "Turn around the player to dodge the bullets\nand collect the guns with your zombies.\nNow use the arrows instead of the mouse\nto switch between zombies.\nNo gun = No win",
+			"command" : "finish_with_defeat"
+		},
+		{
+			"time" : 2500,
+			"text" : "Get to 1500 score in order to meet\nthe big gorilla boss",
+			"command" : "finish_with_boss"
+		},
+		{
+			"time" : 1000,
+			"text" : "The boss can spawn zombies or increase it's speed.\nEach special move restores the gorilla's health",
+			"command" : "stop_after 2000"
+		},
+		{
+			"time" : 1500,
+			"text" : "Well done! Now you can defeat at least 10 bosses.\nYou will figure out some other things later on...",
+			"command" : "end_tutorial"
+		}
+	]
+}
