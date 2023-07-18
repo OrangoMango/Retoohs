@@ -105,7 +105,7 @@ public abstract class GameObject{
 				}
 			}
 		}
-		if (this.x-this.w < 0 || this.y-this.h < 0 || this.x+this.w > MainApplication.WIDTH || this.y+this.h > MainApplication.HEIGHT){
+		if (this.x-this.w < 0 || this.y-this.h < 0 || this.x+this.w > MainApplication.WIDTH/MainApplication.SCALE || this.y+this.h > MainApplication.HEIGHT/MainApplication.SCALE){
 			this.x -= x;
 			this.y -= y;
 			return false;

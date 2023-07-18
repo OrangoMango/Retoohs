@@ -48,7 +48,7 @@ public class Tutorial{
 			int n = Integer.parseInt(this.command.split("summon_zombie ")[1]);
 			Random random = new Random();
 			for (int i = 0; i < n; i++){
-				Enemy e = new Enemy(this.gc, random.nextInt(MainApplication.WIDTH-200)+100, random.nextInt(MainApplication.HEIGHT-200)+100, GameScreen.getInstance().getPlayer(), 0);
+				Enemy e = new Enemy(this.gc, random.nextInt(800)+100, random.nextInt(400)+100, GameScreen.getInstance().getPlayer(), 0);
 				GameScreen.getInstance().getGameObjects().add(e);
 			}
 		} else if (this.command.startsWith("stop_after")){

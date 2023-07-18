@@ -82,6 +82,8 @@ public class HomeScreen{
 	private void update(GraphicsContext gc){
 		gc.clearRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
 		gc.drawImage(this.background, 0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
+		gc.save();
+		gc.scale(MainApplication.SCALE, MainApplication.SCALE);
 		gc.drawImage(this.logo, 350, 120, 300, 100);
 		for (MenuButton mb : this.buttons){
 			mb.render();
@@ -89,5 +91,6 @@ public class HomeScreen{
 		for (MenuSlider ms : this.sliders){
 			ms.render();
 		}
+		gc.restore();
 	}
 }
