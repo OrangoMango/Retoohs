@@ -6,14 +6,13 @@ import javafx.scene.image.Image;
 import javafx.animation.*;
 import javafx.util.Duration;
 import javafx.scene.input.MouseButton;
-import javafx.scene.media.MediaPlayer;
 
 import java.util.*;
 
 import com.orangomango.retoohs.MainApplication;
 
 public class HomeScreen{
-	private MediaPlayer mediaPlayer;
+	private String mediaPlayer;
 	private Timeline loop;
 	private List<MenuButton> buttons = new ArrayList<>();
 	private List<MenuSlider> sliders = new ArrayList<>();
@@ -21,7 +20,8 @@ public class HomeScreen{
 	private Image logo = MainApplication.assetLoader.getImage("logo.png");
 	
 	public HomeScreen(){
-		this.mediaPlayer = MainApplication.playSound(MainApplication.MENU_BACKGROUND_MUSIC, true);
+		this.mediaPlayer = MainApplication.MENU_BACKGROUND_MUSIC;
+		MainApplication.playSound(this.mediaPlayer, true);
 	}
 	
 	public StackPane getLayout(){
@@ -50,20 +50,20 @@ public class HomeScreen{
 		
 		this.buttons.add(new MenuButton(gc, 250, 300, 150, 50, MainApplication.assetLoader.getImage("button_play.jpg"), () -> {
 			this.loop.stop();
-			if (this.mediaPlayer != null) this.mediaPlayer.stop();
+			MainApplication.removeMediaPlayer(this.mediaPlayer);
 			GameScreen gs = new GameScreen();
 			MainApplication.stage.getScene().setRoot(gs.getLayout());
 		}));
 		this.buttons.add(new MenuButton(gc, 250, 400, 150, 50, MainApplication.assetLoader.getImage("button_credits.jpg"), () -> {
 			this.loop.stop();
-			if (this.mediaPlayer != null) this.mediaPlayer.stop();
+			MainApplication.removeMediaPlayer(this.mediaPlayer);
 			CreditsScreen cs = new CreditsScreen();
 			MainApplication.stage.getScene().setRoot(cs.getLayout());
 		}));
 
 		MenuSlider musicSlider = new MenuSlider(gc, 550, 315, 200, 30, MainApplication.assetLoader.getImage("icon_music.png"), v -> {
 			MainApplication.musicVolume = v;
-			if (this.mediaPlayer != null) this.mediaPlayer.setVolume(v);
+			//if (this.mediaPlayer != null) this.mediaPlayer.setVolume(v);
 		});
 		musicSlider.setProgress(MainApplication.musicVolume);
 		MenuSlider sfxSlider = new MenuSlider(gc, 550, 375, 200, 30, MainApplication.assetLoader.getImage("icon_sfx.png"), v -> MainApplication.sfxVolume = v);

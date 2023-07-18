@@ -7,12 +7,11 @@ import javafx.animation.*;
 import javafx.util.Duration;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.input.MouseButton;
-import javafx.scene.media.MediaPlayer;
 
 import com.orangomango.retoohs.MainApplication;
 
 public class GameOverScreen{
-	private MediaPlayer mediaPlayer;
+	private String mediaPlayer;
 	private long time;
 	private int score;
 	private int bossesKilled;
@@ -23,7 +22,8 @@ public class GameOverScreen{
 		this.score = s;
 		this.bossesKilled = b;
 		MainApplication.audioPlayed = false;
-		this.mediaPlayer = MainApplication.playSound(MainApplication.GAMEOVER_BACKGROUND_MUSIC, true);
+		this.mediaPlayer = MainApplication.GAMEOVER_BACKGROUND_MUSIC;
+		MainApplication.playSound(this.mediaPlayer, true);
 		MainApplication.schedule(() -> this.clickAllowed = true, 2000);
 	}
 
@@ -34,7 +34,7 @@ public class GameOverScreen{
 		
 		canvas.setOnMousePressed(e -> {
 			if (e.getButton() == MouseButton.PRIMARY && this.clickAllowed){
-				if (this.mediaPlayer != null) this.mediaPlayer.stop();
+				MainApplication.removeMediaPlayer(this.mediaPlayer);
 				HomeScreen hs = new HomeScreen();
 				MainApplication.stage.getScene().setRoot(hs.getLayout());
 			}

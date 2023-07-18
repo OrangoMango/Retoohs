@@ -6,7 +6,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.image.*;
 import javafx.scene.text.Font;
 import javafx.animation.*;
-import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -45,7 +44,7 @@ public class GameScreen{
 	public Drop targetDrop;
 	private long startTime;
 	private Timeline loop;
-	private MediaPlayer mediaPlayer;
+	private String mediaPlayer;
 	private boolean paused, tempStopped;
 	private long lastPaused;
 	private int pausedTime;
@@ -77,7 +76,8 @@ public class GameScreen{
 			throw new IllegalStateException("instance != null");
 		}
 		instance = this;
-		this.mediaPlayer = MainApplication.playSound(MainApplication.BACKGROUND_MUSIC, true);
+		this.mediaPlayer = MainApplication.BACKGROUND_MUSIC;
+		MainApplication.playSound(this.mediaPlayer, true);
 	}
 	
 	public static GameScreen getInstance(){
@@ -280,10 +280,11 @@ public class GameScreen{
 		spawner.start();
 	}
 	
-	private void changeMusic(Media music){
-		if (this.mediaPlayer != null) this.mediaPlayer.stop();
+	private void changeMusic(String music){
+		MainApplication.removeMediaPlayer(this.mediaPlayer);
 		MainApplication.audioPlayed = false;
-		this.mediaPlayer = MainApplication.playSound(music, true);
+		this.mediaPlayer = music;
+		MainApplication.playSound(music, true);
 	}
 	
 	public void screenShake(){
@@ -325,9 +326,7 @@ public class GameScreen{
 		MainApplication.schedule(() -> MainApplication.threadsRunning = true, 500);
 		GameScreen.instance = null;
 		this.player.stopAnimation();
-		if (this.mediaPlayer != null){
-			this.mediaPlayer.stop();
-		}
+		MainApplication.removeMediaPlayer(this.mediaPlayer);
 	}
 
 	public void applyTutorial(Consumer<Tutorial> cons){
