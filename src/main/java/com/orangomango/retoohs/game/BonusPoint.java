@@ -27,6 +27,7 @@ public class BonusPoint{
 		this.gc = gc;
 		this.x = x;
 		this.y = y;
+		resetPausedTime();
 		MainApplication.schedulePeriodic(() -> {
 			if (!GameScreen.getInstance().isPaused()){
 				this.extraY += this.forward ? 1 : -1;
@@ -73,6 +74,11 @@ public class BonusPoint{
 			GameScreen.getInstance().score += 50*(GameScreen.getInstance().playsPlayer ? 1 : -1);
 			player.heal(10);
 			MainApplication.playSound(MainApplication.SCORE_SOUND, false);
+			GameScreen.getInstance().applyTutorial(t -> {
+				if (t.getIndex() == 0){
+					t.trigger();
+				}
+			});
 			relocate();
 		} else if (diff > MAXTIME){
 			GameScreen.getInstance().score -= 150*(GameScreen.getInstance().playsPlayer ? 1 : -1);

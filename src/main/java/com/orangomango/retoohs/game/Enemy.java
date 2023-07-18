@@ -29,7 +29,7 @@ public class Enemy extends GameObject implements GunObject{
 		this.type = type;
 		this.target = target;
 		this.invulnerable = true;
-		this.shooter = Math.random() > 0.7;
+		this.shooter = Math.random() > (GameScreen.getInstance().playsPlayer ? 0.7 : 0.5);
 		if (this.shooter) Bullet.applyConfiguration(this.currentGun, null, null, 0, 0, 0, this);
 		this.hp = 10+5*this.type;
 		this.dmg = 10+5*this.type;

@@ -43,6 +43,7 @@ public class Drop{
 		if (this.rarity >= Bullet.getBulletConfig(GameScreen.getInstance().getPlayer().getCurrentGun()).getInt("rarity")){
 			GameScreen.getInstance().targetDrop = this;
 		}
+		resetPausedTime();
 	}
 	
 	public boolean exists(){
@@ -83,6 +84,11 @@ public class Drop{
 				collision.setGun(gunName);
 				GameScreen.getInstance().getFloatingTexts().add(new FloatingText(this.gc, gunName.replace("_", " "), this.x-5, this.y));
 				this.exists = false;
+				GameScreen.getInstance().applyTutorial(t -> {
+					if (t.getIndex() == 1){
+						t.next();
+					}
+				});
 				if (GameScreen.getInstance().targetDrop == this){
 					GameScreen.getInstance().targetDrop = null;
 				}

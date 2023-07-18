@@ -33,7 +33,17 @@ public class Reverser{
 		this.makeSound = false;
 		GameScreen.getInstance().playsPlayer = false;
 		GameScreen.getInstance().getPlayer().heal(100);
-		GameScreen.getInstance().tempstop(gc.getCanvas());
+		GameScreen.getInstance().tempstop(this.gc.getCanvas());
+		GameScreen.getInstance().applyTutorial(t -> {
+			if (t.getIndex() == 4){
+				t.next();
+			}
+		});
+	}
+
+	public void tutorialModify(){
+		allowStart();
+		this.lastTime = System.currentTimeMillis()-GameScreen.getInstance().getPausedTime()-25000;
 	}
 	
 	public void allowStart(){

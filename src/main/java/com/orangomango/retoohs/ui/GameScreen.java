@@ -14,8 +14,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.event.EventHandler;
 import javafx.scene.media.Media;
 import javafx.geometry.Point2D;
+import javafx.scene.text.TextAlignment;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import com.orangomango.retoohs.MainApplication;
 import com.orangomango.retoohs.game.*;
@@ -47,7 +49,7 @@ public class GameScreen{
 	private boolean paused, tempStopped;
 	private long lastPaused;
 	private int pausedTime;
-	private Image pausedImage;
+	public Image pausedImage;
 	private Boss currentBoss;
 	private int bossExtraScore, lastBossScore;
 	private boolean shaking;
@@ -59,6 +61,10 @@ public class GameScreen{
 	private List<MenuButton> pauseButtons = new ArrayList<>();
 	private int bossesKilled;
 	private UIBar healthBar, exBar, restoreBar, bossBar;
+	private boolean doingTutorial = false, touchControls = false;
+	private Tutorial tutorial;
+	private Runnable onResume;
+	private JoyStick moveController, shootController;
 	
 	private Image groundImage = MainApplication.assetLoader.getImage("ground.png");
 	private Image[] stoneGroundImages = new Image[]{MainApplication.assetLoader.getImage("ground_stone_0.png"), MainApplication.assetLoader.getImage("ground_stone_1.png")};
@@ -109,6 +115,17 @@ public class GameScreen{
 	public Boss getCurrentBoss(){
 		return this.currentBoss;
 	}
+
+	public Reverser getReverser(){
+		return this.reverser;
+	}
+
+	public void setOnResume(Runnable r){
+		this.onResume = () -> {
+			r.run();
+			this.onResume = null;
+		};
+	}
 	
 	public StackPane getLayout(){
 		StackPane pane = new StackPane();
@@ -119,11 +136,6 @@ public class GameScreen{
 				setPause(!this.paused);
 				if (this.paused){
 					this.pausedImage = canvas.snapshot(null, new WritableImage(MainApplication.WIDTH, MainApplication.HEIGHT));
-					this.bpoint1.resetPausedTime();
-					this.bpoint2.resetPausedTime();
-					for (int i = 0; i < this.drops.size(); i++){
-						this.drops.get(i).resetPausedTime();
-					}
 				}
 			} else {
 				this.keys.put(e.getCode(), true);
@@ -132,9 +144,14 @@ public class GameScreen{
 		canvas.setOnKeyReleased(e -> this.keys.put(e.getCode(), false));
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 
+		this.tutorial = new Tutorial(gc);
+
 		this.player = new Player(gc, 300, 300);
 		this.gameObjects.add(this.player);
 		Bullet.applyConfiguration("normal_gun", null, null, 0, 0, 0, this.player);
+
+		this.moveController = new JoyStick(gc, 50, MainApplication.HEIGHT-150);
+		this.shootController = new JoyStick(gc, MainApplication.WIDTH-150, MainApplication.HEIGHT-150);
 		
 		EventHandler<MouseEvent> mouseEvent = e -> {
 			if (this.paused){
@@ -143,50 +160,27 @@ public class GameScreen{
 				}
 				return;
 			}
-			if (this.currentBoss == null && !this.playsPlayer) return;
-			if (e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY){
-				long diff = System.currentTimeMillis()-this.lastExplosion;
-				boolean exp = e.getButton() == MouseButton.SECONDARY && diff > 10000;
-				if (exp){
-					this.lastExplosion = System.currentTimeMillis();
+			if (this.touchControls){
+				this.moveController.onMousePressed(e);
+				this.shootController.onMousePressed(e);
+				if (this.shootController.isUsed()){
+					playerShoot(false, this.shootController.getAngle());
 				}
-				if (Bullet.configs.get(this.player).getAmmo() == 0){
-					reloadAmmo();
-				}
-				this.player.shoot(Math.atan2(e.getY()-this.player.getY(), e.getX()-this.player.getX()), exp);
+			} else if (e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY){
+				playerShoot(e.getButton() == MouseButton.SECONDARY, Math.atan2(e.getY()-this.player.getY(), e.getX()-this.player.getX()));
 			}
 		};
 		canvas.setOnMousePressed(mouseEvent);
 		canvas.setOnMouseDragged(mouseEvent);
-		
 		canvas.setOnMouseMoved(e -> this.player.pointGun(Math.atan2(e.getY()-this.player.getY(), e.getX()-this.player.getX())));
-		
-		Thread spawner = new Thread(() -> {
-			Random random = new Random();
-			try {
-				Thread.sleep(3000);
-				while (this.gameRunning){
-					if (this.paused) continue;
-					int type = 0;
-					/*if (this.score > 500){
-						int delta = this.score-500;
-						int n = delta/1000;
-						type = random.nextInt(n+1);
-					}
-					if (type > 4) type = 4;*/
-					Enemy e = new Enemy(gc, random.nextInt(MainApplication.WIDTH-200)+100, random.nextInt(MainApplication.HEIGHT-200)+100, this.player, type);
-					if (this.selectedEnemy == null && !this.playsPlayer){
-						this.selectedEnemy = e;
-					}
-					this.gameObjects.add(e);
-					Thread.sleep((random.nextInt(1000)+1000)*(this.currentBoss != null ? 2 : 1));
-				}
-			} catch (InterruptedException ex){
-				ex.printStackTrace();
-			}
+		canvas.setOnMouseReleased(e -> {
+			this.moveController.onMouseReleased();
 		});
-		spawner.setDaemon(true);
-		spawner.start();
+
+		// Start spawning the zombies
+		if (!this.doingTutorial){
+			startSpawner(gc);
+		}
 		
 		this.bpoint1 = new BonusPoint(gc, 0, 0);
 		this.bpoint2 = new BonusPoint(gc, 0, 0);
@@ -206,13 +200,13 @@ public class GameScreen{
 		this.startTime = System.currentTimeMillis();
 		
 		Image homeButtonImage = MainApplication.assetLoader.getImage("button_home.jpg");
-		this.pauseButtons.add(new MenuButton(gc, 420, 300, 64, 64, homeButtonImage, () -> {
+		this.pauseButtons.add(new MenuButton(gc, 420, 450, 64, 64, homeButtonImage, () -> {
 			quit();
 			HomeScreen hs = new HomeScreen();
 			MainApplication.stage.getScene().setRoot(hs.getLayout());
 		}));
 		Image resumeButtonImage = MainApplication.assetLoader.getImage("button_resume.jpg");
-		this.pauseButtons.add(new MenuButton(gc, 520, 300, 64, 64, resumeButtonImage, () -> setPause(false)));
+		this.pauseButtons.add(new MenuButton(gc, 520, 450, 64, 64, resumeButtonImage, () -> setPause(false)));
 
 		// UI bars
 		Image hpImage = MainApplication.assetLoader.getImage("hpbar.png");
@@ -227,9 +221,63 @@ public class GameScreen{
 		this.loop = new Timeline(new KeyFrame(Duration.millis(1000.0/MainApplication.FPS), e -> update(gc)));
 		this.loop.setCycleCount(Animation.INDEFINITE);
 		this.loop.play();
+
+		if (this.doingTutorial){
+			this.tutorial.next();
+		}
 		
 		pane.getChildren().add(canvas);
 		return pane;
+	}
+
+	private void playerShoot(boolean explosion, double angle){
+		if (this.currentBoss == null && !this.playsPlayer) return;
+		long diff = System.currentTimeMillis()-this.lastExplosion;
+		boolean exp = explosion && diff > 10000;
+		if (exp){
+			this.lastExplosion = System.currentTimeMillis();
+			applyTutorial(t -> {
+				if (t.getIndex() == 2){
+					t.next();
+				}
+			});
+		}
+		if (Bullet.configs.get(this.player) != null && Bullet.configs.get(this.player).getAmmo() == 0){
+			reloadAmmo();
+		}
+		this.player.shoot(angle, exp);
+	}
+
+	public void startSpawner(GraphicsContext gc){
+		Thread spawner = new Thread(() -> {
+			Random random = new Random();
+			try {
+				Thread.sleep(3000);
+				while (this.gameRunning){
+					if (this.paused) continue;
+					int type = 0;
+					/*if (this.score > 500){
+						int delta = this.score-500;
+						int n = delta/1000;
+						type = random.nextInt(n+1);
+					}
+					if (type > 4) type = 4;*/
+					Enemy e = new Enemy(gc, random.nextInt(MainApplication.WIDTH-200)+100, random.nextInt(MainApplication.HEIGHT-200)+100, this.player, type);
+					if (!this.playsPlayer){
+						this.drops.add(new Drop(gc, random.nextInt(MainApplication.WIDTH-200)+100, random.nextInt(MainApplication.HEIGHT-200)+100));
+						if (this.selectedEnemy == null){
+							this.selectedEnemy = e;
+						}
+					}
+					this.gameObjects.add(e);
+					Thread.sleep((random.nextInt(1000)+1000)*(this.currentBoss != null ? 2 : 1));
+				}
+			} catch (InterruptedException ex){
+				ex.printStackTrace();
+			}
+		});
+		spawner.setDaemon(true);
+		spawner.start();
 	}
 	
 	private void changeMusic(Media music){
@@ -270,7 +318,7 @@ public class GameScreen{
 		changeMusic(MainApplication.BOSS_BACKGROUND_MUSIC);
 	}
 	
-	private void quit(){
+	public void quit(){
 		this.loop.stop();
 		this.gameRunning = false;
 		MainApplication.threadsRunning = false;
@@ -281,15 +329,27 @@ public class GameScreen{
 			this.mediaPlayer.stop();
 		}
 	}
+
+	public void applyTutorial(Consumer<Tutorial> cons){
+		if (this.doingTutorial){
+			cons.accept(this.tutorial);
+		}
+	}
 	
-	private void setPause(boolean p){
+	public void setPause(boolean p){
 		this.paused = p;
 		if (this.paused){
 			this.lastPaused = System.currentTimeMillis();
+			this.bpoint1.resetPausedTime();
+			this.bpoint2.resetPausedTime();
+			for (int i = 0; i < this.drops.size(); i++){
+				this.drops.get(i).resetPausedTime();
+			}
 		} else {
 			long diff = System.currentTimeMillis()-this.lastPaused;
 			this.pausedTime += diff;
 			this.pausedImage = null;
+			if (this.onResume != null) this.onResume.run();
 		}
 	}
 	
@@ -377,6 +437,15 @@ public class GameScreen{
 				for (MenuButton mb : this.pauseButtons){
 					mb.render();
 				}
+				String tutorialMessage = this.tutorial.getCurrentText();
+				if (tutorialMessage != null){
+					gc.save();
+					gc.setFill(Color.WHITE);
+					gc.setFont(FONT_30);
+					gc.setTextAlign(TextAlignment.CENTER);
+					gc.fillText(tutorialMessage, MainApplication.WIDTH/2, 200);
+					gc.restore();
+				}
 			}
 			return;
 		}
@@ -384,6 +453,11 @@ public class GameScreen{
 		if (this.score < 0) this.score = 0;
 		if (this.score-this.bossExtraScore-this.lastBossScore >= BOSS_SCORE && this.currentBoss == null && this.playsPlayer){
 			spawnBoss(gc);
+			applyTutorial(t -> {
+				if (t.getIndex() == 7){
+					t.next();
+				}
+			});
 		}
 		
 		gc.save();
@@ -398,7 +472,7 @@ public class GameScreen{
 		
 		// Render bonuspoint
 		this.bpoint1.render();
-		this.bpoint2.render();
+		if (!this.doingTutorial || this.tutorial.getIndex() > 0) this.bpoint2.render();
 
 		long diff = System.currentTimeMillis()-this.startTime-this.pausedTime;
 		
@@ -432,14 +506,25 @@ public class GameScreen{
 						tempstop(gc.getCanvas());
 						this.player.setInvulnerable(true);
 						MainApplication.schedule(() -> this.player.setInvulnerable(false), 1500);
+						applyTutorial(t -> {
+							if (t.getIndex() == 6){
+								this.score = BOSS_SCORE-100;
+								t.trigger();
+							}
+						});
 					}
 				}
 				i--;
 				if (!this.playsPlayer){
 					this.score -= 5;
 				}
-				if (obj instanceof Enemy && Math.random() > 0.75){ // 25%
-					this.drops.add(new Drop(gc, obj.getX(), obj.getY()));
+				if (obj instanceof Enemy){
+					if (this.gameObjects.size() == 1 && this.tutorial.getIndex() == 2){
+						this.tutorial.next();
+					}
+					if (Math.random() > 0.75 || this.tutorial.getIndex() == 1){ // 25%
+						this.drops.add(new Drop(gc, obj.getX(), obj.getY()));
+					}
 				}
 				if (obj instanceof Boss){
 					this.currentBoss = null;
@@ -586,6 +671,11 @@ public class GameScreen{
 				movement = movement.add(1, 0);
 				idle = false;
 			}
+			if (this.touchControls && this.moveController.isUsed()){
+				double moveAngle = this.moveController.getAngle();
+				movement = new Point2D(Math.cos(moveAngle), Math.sin(moveAngle));
+				idle = false;
+			}
 			movement = movement.normalize().multiply(playerSpeed);
 			this.player.move(movement.getX(), movement.getY(), false);
 			if (idle){
@@ -674,5 +764,10 @@ public class GameScreen{
 		gc.fillText(String.format("%2d:%02d", diff/60000, diff/1000%60), 20, MainApplication.HEIGHT-20);
 		
 		this.reverser.render();
+
+		if (this.touchControls){
+			this.moveController.render();
+			this.shootController.render();
+		}
 	}
 }
