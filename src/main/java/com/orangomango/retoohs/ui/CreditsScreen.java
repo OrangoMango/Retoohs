@@ -60,16 +60,19 @@ public class CreditsScreen{
 	private void update(GraphicsContext gc){
 		gc.clearRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
 		gc.drawImage(this.background, 0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
+		gc.save();
+		gc.scale(MainApplication.SCALE, MainApplication.SCALE);
 		gc.setFill(Color.BLACK);
 		gc.save();
 		gc.setFont(GameScreen.FONT_30);
 		gc.setTextAlign(TextAlignment.CENTER);
 		gc.translate(0, -this.scroll);
-		gc.fillText(this.credits, MainApplication.WIDTH/2, 125);
+		gc.fillText(this.credits, 500, 125);
 		gc.restore();
 		this.scroll++;
-		if (this.scroll > MainApplication.HEIGHT){
+		if (this.scroll > 600){
 			this.scroll = 0;
 		}
+		gc.restore();
 	}
 }

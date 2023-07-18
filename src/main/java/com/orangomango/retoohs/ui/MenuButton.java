@@ -4,6 +4,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.geometry.Rectangle2D;
 
+import com.orangomango.retoohs.MainApplication;
+
 public class MenuButton{
 	private GraphicsContext gc;
 	private Runnable onClick;
@@ -21,6 +23,8 @@ public class MenuButton{
 	}
 	
 	public void click(double x, double y){
+		x /= MainApplication.SCALE;
+		y /= MainApplication.SCALE;
 		Rectangle2D rect = new Rectangle2D(this.x, this.y, this.w, this.h);
 		if (rect.contains(x, y)){
 			this.onClick.run();

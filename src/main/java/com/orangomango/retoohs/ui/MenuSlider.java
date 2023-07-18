@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.geometry.Rectangle2D;
 
 import java.util.function.Consumer;
+import com.orangomango.retoohs.MainApplication;
 
 public class MenuSlider{
 	private GraphicsContext gc;
@@ -29,6 +30,8 @@ public class MenuSlider{
 	}
 
 	public void setProgress(double x, double y){
+		x /= MainApplication.SCALE;
+		y /= MainApplication.SCALE;
 		Rectangle2D rect = new Rectangle2D(this.x, this.y, this.w, this.h);
 		if (rect.contains(x, y)){
 			this.progress = (x-this.x)/this.w;

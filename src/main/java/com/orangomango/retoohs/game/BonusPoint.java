@@ -53,8 +53,8 @@ public class BonusPoint{
 			GameScreen.getInstance().targetPoint = null;
 		}
 		Random random = new Random();
-		this.x = random.nextInt(MainApplication.WIDTH-200)+100;
-		this.y = random.nextInt(MainApplication.HEIGHT-200)+100;
+		this.x = random.nextInt(800)+100;
+		this.y = random.nextInt(400)+100;
 		this.startTime = System.currentTimeMillis();
 	}
 

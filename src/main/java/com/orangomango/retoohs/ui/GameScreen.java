@@ -150,8 +150,8 @@ public class GameScreen{
 		this.gameObjects.add(this.player);
 		Bullet.applyConfiguration("normal_gun", null, null, 0, 0, 0, this.player);
 
-		this.moveController = new JoyStick(gc, 50, MainApplication.HEIGHT-150);
-		this.shootController = new JoyStick(gc, MainApplication.WIDTH-150, MainApplication.HEIGHT-150);
+		this.moveController = new JoyStick(gc, 50, 450);
+		this.shootController = new JoyStick(gc, 850, 450);
 		
 		EventHandler<MouseEvent> mouseEvent = e -> {
 			if (this.paused){
@@ -167,7 +167,7 @@ public class GameScreen{
 					playerShoot(false, this.shootController.getAngle());
 				}
 			} else if (e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY){
-				playerShoot(e.getButton() == MouseButton.SECONDARY, Math.atan2(e.getY()-this.player.getY(), e.getX()-this.player.getX()));
+				playerShoot(e.getButton() == MouseButton.SECONDARY, Math.atan2(e.getY()/MainApplication.SCALE-this.player.getY(), e.getX()/MainApplication.SCALE-this.player.getX()));
 			}
 		};
 		canvas.setOnMousePressed(mouseEvent);
@@ -190,7 +190,7 @@ public class GameScreen{
 		Random random = new Random();		
 		this.reverser = new Reverser(gc);
 
-		this.groundPattern = new int[MainApplication.WIDTH/64+1][MainApplication.HEIGHT/64+1];
+		this.groundPattern = new int[1000/64+1][600/64+1];
 		for (int x = 0; x < this.groundPattern.length; x++){
 			for (int y = 0; y < this.groundPattern[0].length; y++){
 				this.groundPattern[x][y] = Math.random() > 0.75 ? random.nextInt(this.stoneGroundImages.length) : -1;
@@ -262,9 +262,9 @@ public class GameScreen{
 						type = random.nextInt(n+1);
 					}
 					if (type > 4) type = 4;*/
-					Enemy e = new Enemy(gc, random.nextInt(MainApplication.WIDTH-200)+100, random.nextInt(MainApplication.HEIGHT-200)+100, this.player, type);
+					Enemy e = new Enemy(gc, random.nextInt(800)+100, random.nextInt(400)+100, this.player, type);
 					if (!this.playsPlayer){
-						this.drops.add(new Drop(gc, random.nextInt(MainApplication.WIDTH-200)+100, random.nextInt(MainApplication.HEIGHT-200)+100));
+						this.drops.add(new Drop(gc, random.nextInt(800)+100, random.nextInt(400)+100));
 						if (this.selectedEnemy == null){
 							this.selectedEnemy = e;
 						}
@@ -423,16 +423,17 @@ public class GameScreen{
 		gc.setFill(Color.LIME);
 		gc.fillRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
 		Random random = new Random();
-		
+		gc.save();
+		gc.scale(MainApplication.SCALE, MainApplication.SCALE);
 		if (this.pausedImage != null){
-			gc.drawImage(this.pausedImage, 0, 0);
+			gc.drawImage(this.pausedImage, 0, 0, 1000, 600);
 			if (this.tempStopped){
-				gc.drawImage(this.reverseImage, 1+66*this.reverseIndex, 1, 64, 64, MainApplication.WIDTH/2-100, MainApplication.HEIGHT/2-100, 200, 200);
+				gc.drawImage(this.reverseImage, 1+66*this.reverseIndex, 1, 64, 64, 500-100, 300-100, 200, 200);
 			} else {
 				gc.save();
 				gc.setGlobalAlpha(0.6);
 				gc.setFill(Color.BLACK);
-				gc.fillRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
+				gc.fillRect(0, 0, 1000, 600);
 				gc.restore();
 				for (MenuButton mb : this.pauseButtons){
 					mb.render();
@@ -443,10 +444,11 @@ public class GameScreen{
 					gc.setFill(Color.WHITE);
 					gc.setFont(FONT_30);
 					gc.setTextAlign(TextAlignment.CENTER);
-					gc.fillText(tutorialMessage, MainApplication.WIDTH/2, 200);
+					gc.fillText(tutorialMessage, 500, 200);
 					gc.restore();
 				}
 			}
+			gc.restore();
 			return;
 		}
 		
@@ -463,8 +465,8 @@ public class GameScreen{
 		gc.save();
 		gc.translate(-this.cameraShakeX, -this.cameraShakeY);
 		
-		for (int x = 0; x < MainApplication.WIDTH; x += 64){
-			for (int y = 0; y < MainApplication.HEIGHT; y += 64){
+		for (int x = 0; x < 1000; x += 64){
+			for (int y = 0; y < 600; y += 64){
 				int index = this.groundPattern[x/64][y/64];
 				gc.drawImage(index >= 0 ? this.stoneGroundImages[index] : this.groundImage, x, y, 64, 64);
 			}
@@ -761,7 +763,7 @@ public class GameScreen{
 		// Time
 		gc.setFill(Color.BLACK);
 		gc.setFont(FONT_30);
-		gc.fillText(String.format("%2d:%02d", diff/60000, diff/1000%60), 20, MainApplication.HEIGHT-20);
+		gc.fillText(String.format("%2d:%02d", diff/60000, diff/1000%60), 20, 580);
 		
 		this.reverser.render();
 
@@ -769,5 +771,6 @@ public class GameScreen{
 			this.moveController.render();
 			this.shootController.render();
 		}
+		gc.restore();
 	}
 }
