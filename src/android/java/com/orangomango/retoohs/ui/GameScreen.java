@@ -9,7 +9,7 @@ import javafx.animation.*;
 import javafx.util.Duration;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
 import javafx.event.EventHandler;
 import javafx.scene.media.Media;
 import javafx.geometry.Point2D;
@@ -60,7 +60,7 @@ public class GameScreen{
 	private List<MenuButton> pauseButtons = new ArrayList<>();
 	private int bossesKilled;
 	private UIBar healthBar, exBar, restoreBar, bossBar;
-	private boolean doingTutorial = false, touchControls = false;
+	private boolean doingTutorial = false, touchControls = true;
 	private Tutorial tutorial;
 	private Runnable onResume;
 	private JoyStick moveController, shootController;
@@ -153,28 +153,32 @@ public class GameScreen{
 		this.moveController = new JoyStick(gc, 50, 450);
 		this.shootController = new JoyStick(gc, 850, 450);
 		
-		EventHandler<MouseEvent> mouseEvent = e -> {
+		EventHandler<TouchEvent> mouseEvent = e -> {
 			if (this.paused){
 				for (MenuButton mb : this.pauseButtons){
-					mb.click(e.getX(), e.getY());
+					mb.click(e.getTouchPoint().getX(), e.getTouchPoint().getY());
 				}
 				return;
 			}
 			if (this.touchControls){
-				this.moveController.onMousePressed(e);
-				this.shootController.onMousePressed(e);
+				if (e.getTouchPoint().getX() <= MainApplication.WIDTH/2){
+					this.moveController.onMousePressed(e);
+				} else {
+					this.shootController.onMousePressed(e);
+				}
 				if (this.shootController.isUsed()){
 					playerShoot(false, this.shootController.getAngle());
 				}
-			} else if (e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY){
-				playerShoot(e.getButton() == MouseButton.SECONDARY, Math.atan2(e.getY()/MainApplication.SCALE-this.player.getY(), e.getX()/MainApplication.SCALE-this.player.getX()));
 			}
 		};
-		canvas.setOnMousePressed(mouseEvent);
-		canvas.setOnMouseDragged(mouseEvent);
-		canvas.setOnMouseMoved(e -> this.player.pointGun(Math.atan2(e.getY()-this.player.getY(), e.getX()-this.player.getX())));
-		canvas.setOnMouseReleased(e -> {
-			this.moveController.onMouseReleased();
+		canvas.setOnTouchPressed(mouseEvent);
+		canvas.setOnTouchMoved(mouseEvent);
+		canvas.setOnTouchReleased(e -> {
+			if (e.getTouchPoint().getX() <= MainApplication.WIDTH/2){
+				this.moveController.onMouseReleased();
+			} else {
+				this.shootController.onMouseReleased();
+			}
 		});
 
 		// Start spawning the zombies
@@ -636,6 +640,10 @@ public class GameScreen{
 				if (this.keys.getOrDefault(KeyCode.D, false)){
 					movement = movement.add(1, 0);
 				}
+				if (this.touchControls && this.moveController.isUsed()){
+					double moveAngle = this.moveController.getAngle();
+					movement = new Point2D(Math.cos(moveAngle), Math.sin(moveAngle));
+				}
 				movement = movement.normalize().multiply(Enemy.SPEED*1.2);
 				this.selectedEnemy.move(movement.getX(), movement.getY(), false);
 				
@@ -768,7 +776,7 @@ public class GameScreen{
 
 		if (this.touchControls){
 			this.moveController.render();
-			this.shootController.render();
+			if (this.playsPlayer) this.shootController.render();
 		}
 		gc.restore();
 	}

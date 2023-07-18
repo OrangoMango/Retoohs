@@ -2,8 +2,10 @@ package com.orangomango.retoohs.ui;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
 import javafx.geometry.Rectangle2D;
+
+import com.orangomango.retoohs.MainApplication;
 
 public class JoyStick{
 	private GraphicsContext gc;
@@ -19,14 +21,16 @@ public class JoyStick{
 		this.y = py;
 	}
 	
-	public void onMousePressed(MouseEvent evt){
-		if ((new Rectangle2D(x, y, 100, 100)).contains(evt.getX(), evt.getY())){
-			angle = Math.atan2(evt.getY()-(y+50), evt.getX()-(x+50));
-			extraX = evt.getX()-x-50;
-			extraY = evt.getY()-y-50;
+	public void onMousePressed(TouchEvent evt){
+		double tx = evt.getTouchPoint().getX()/MainApplication.SCALE;
+		double ty = evt.getTouchPoint().getY()/MainApplication.SCALE;
+		if ((new Rectangle2D(x, y, 100, 100)).contains(tx, ty)){
+			angle = Math.atan2(ty-(y+50), tx-(x+50));
+			extraX = tx-x-50;
+			extraY = ty-y-50;
 			insidePress = true;
 		} else if (insidePress){
-			angle = Math.atan2(evt.getY()-(y+50), evt.getX()-(x+50));
+			angle = Math.atan2(ty-(y+50), tx-(x+50));
 			extraX = 50*Math.cos(angle);
 			extraY = 50*Math.sin(angle);
 		}

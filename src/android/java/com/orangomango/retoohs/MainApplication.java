@@ -1,10 +1,12 @@
 package com.orangomango.retoohs;
 
 import javafx.application.Application;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.animation.Animation;
+import javafx.scene.paint.Color;
 
 import java.io.*;
 import java.nio.file.*;
@@ -24,9 +26,9 @@ import android.content.Context;
 import android.view.View;
 
 public class MainApplication extends Application{
-	public static final int WIDTH = 500; //1000;
-	public static final int HEIGHT = 300; //600;
-	public static final double SCALE = 0.5;
+	public static final int WIDTH = (int)Screen.getPrimary().getVisualBounds().getWidth()-25;
+	public static final int HEIGHT = (int)(WIDTH*0.6);
+	public static final double SCALE = WIDTH/1000.0;
 	public static final int FPS = 40;
 	public static Stage stage;
 	public static boolean threadsRunning = true;
@@ -74,13 +76,34 @@ public class MainApplication extends Application{
 			setHiddenApiExemptions.invoke(vmRuntime, (Object[])new String[][]{new String[]{"L"}});
 		}
 
+		FXActivity.getInstance().runOnUiThread(() -> {
+			FXActivity.getInstance().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+
+			// Clear useless temp files in cache of previous sessions
+			for (File f : FXActivity.getInstance().getCacheDir().listFiles()){
+				f.delete();
+			}
+		});
+
 		loadSounds();
 		Bullet.loadGunSounds();
 		MainApplication.stage = stage;
 
 		HomeScreen hs = new HomeScreen();
-		Scene scene = new Scene(hs.getLayout(), WIDTH, HEIGHT);
-		stage.setScene(scene);
+		Scene mainScene = new Scene(hs.getLayout(), WIDTH, HEIGHT);
+		mainScene.setFill(Color.BLACK);
+		mainScene.setOnKeyPressed(e -> {
+			AudioManager manager = (AudioManager)FXActivity.getInstance().getSystemService(Context.AUDIO_SERVICE);
+			switch (e.getCode()){
+				case VOLUME_UP:
+					manager.adjustVolume(AudioManager.ADJUST_RAISE, AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
+					break;
+				case VOLUME_DOWN:
+					manager.adjustVolume(AudioManager.ADJUST_LOWER, AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
+					break;
+			}
+		});
+		stage.setScene(mainScene);
 		stage.show();
 	}
 
