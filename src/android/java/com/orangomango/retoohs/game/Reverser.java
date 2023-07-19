@@ -53,7 +53,7 @@ public class Reverser{
 	
 	public void render(){
 		if (this.blink && this.makeSound){
-			gc.drawImage(this.image, 900, 500, 64, 64);
+			gc.drawImage(this.image, 900, 50, 64, 64);
 		}
 		long diff = System.currentTimeMillis()-this.lastTime-GameScreen.getInstance().getPausedTime();
 		if (diff > 25000 && this.startAllowed){

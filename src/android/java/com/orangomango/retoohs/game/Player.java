@@ -96,14 +96,18 @@ public class Player extends GameObject implements GunObject{
 	@Override
 	public boolean move(double x, double y, boolean collision){
 		boolean output = super.move(x, y, collision);
-		if (x > 0){
-			setState(State.MOVING_RIGHT);
-		} else if (x < 0){
-			setState(State.MOVING_LEFT);
-		} else if (y > 0){
-			setState(State.MOVING_DOWN);
-		} else if (y < 0){
-			setState(State.MOVING_UP);
+		if (Math.abs(x) > Math.abs(y)){
+			if (x > 0){
+				setState(State.MOVING_RIGHT);
+			} else if (x < 0){
+				setState(State.MOVING_LEFT);
+			}
+		} else if (Math.abs(x) < Math.abs(y)){
+			if (y > 0){
+				setState(State.MOVING_DOWN);
+			} else if (y < 0){
+				setState(State.MOVING_UP);
+			}
 		}
 		return output;
 	}

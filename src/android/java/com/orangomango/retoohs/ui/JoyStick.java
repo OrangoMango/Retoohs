@@ -24,15 +24,15 @@ public class JoyStick{
 	public void onMousePressed(TouchEvent evt){
 		double tx = evt.getTouchPoint().getX()/MainApplication.SCALE;
 		double ty = evt.getTouchPoint().getY()/MainApplication.SCALE;
-		if ((new Rectangle2D(x, y, 100, 100)).contains(tx, ty)){
-			angle = Math.atan2(ty-(y+50), tx-(x+50));
-			extraX = tx-x-50;
-			extraY = ty-y-50;
+		if ((new Rectangle2D(x, y, 150, 150)).contains(tx, ty)){
+			angle = Math.atan2(ty-(y+75), tx-(x+75));
+			extraX = tx-x-75;
+			extraY = ty-y-75;
 			insidePress = true;
 		} else if (insidePress){
-			angle = Math.atan2(ty-(y+50), tx-(x+50));
-			extraX = 50*Math.cos(angle);
-			extraY = 50*Math.sin(angle);
+			angle = Math.atan2(ty-(y+75), tx-(x+75));
+			extraX = 75*Math.cos(angle);
+			extraY = 75*Math.sin(angle);
 		}
 	}
 	
@@ -52,10 +52,13 @@ public class JoyStick{
 	}
 	
 	public void render(){
+		gc.save();
+		gc.setGlobalAlpha(0.7);
 		gc.setStroke(Color.web("#FF7500"));
 		gc.setLineWidth(4);
-		gc.strokeOval(x, y, 100, 100);
+		gc.strokeOval(x, y, 150, 150);
 		gc.setFill(Color.web("#FF7500"));
-		gc.fillOval(x+30+extraX, y+30+extraY, 40, 40);
+		gc.fillOval(x+50+extraX, y+50+extraY, 50, 50);
+		gc.restore();
 	}
 }
