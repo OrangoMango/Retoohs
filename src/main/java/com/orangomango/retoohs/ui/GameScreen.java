@@ -14,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.event.EventHandler;
 import javafx.scene.media.Media;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.text.TextAlignment;
 
 import java.util.*;
@@ -61,10 +62,12 @@ public class GameScreen{
 	private List<MenuButton> pauseButtons = new ArrayList<>();
 	private int bossesKilled;
 	private UIBar healthBar, exBar, restoreBar, bossBar;
-	private boolean doingTutorial = false, touchControls = false;
+	private boolean doingTutorial = false, touchControls = true;
 	private Tutorial tutorial;
 	private Runnable onResume;
 	private JoyStick moveController, shootController;
+	private MenuButton confirmCollectButton, explosionButton, healButton;
+	private boolean nextExplosion;
 	
 	private Image groundImage = MainApplication.assetLoader.getImage("ground.png");
 	private Image[] stoneGroundImages = new Image[]{MainApplication.assetLoader.getImage("ground_stone_0.png"), MainApplication.assetLoader.getImage("ground_stone_1.png")};
@@ -150,8 +153,11 @@ public class GameScreen{
 		this.gameObjects.add(this.player);
 		Bullet.applyConfiguration("normal_gun", null, null, 0, 0, 0, this.player);
 
-		this.moveController = new JoyStick(gc, 50, 450);
-		this.shootController = new JoyStick(gc, 850, 450);
+		this.moveController = new JoyStick(gc, 50, 400);
+		this.shootController = new JoyStick(gc, 800, 400);
+		this.confirmCollectButton = new MenuButton(gc, 550, 500, 50, 50, MainApplication.assetLoader.getImage("warning.png"), () -> this.keys.put(KeyCode.E, true));
+		this.explosionButton = new MenuButton(gc, 625, 500, 50, 50, MainApplication.assetLoader.getImage("warning.png"), () -> this.nextExplosion = true);
+		this.healButton = new MenuButton(gc, 700, 500, 50, 50, MainApplication.assetLoader.getImage("warning.png"), () -> this.keys.put(KeyCode.Q, true));
 		
 		EventHandler<MouseEvent> mouseEvent = e -> {
 			if (this.paused){
@@ -163,8 +169,12 @@ public class GameScreen{
 			if (this.touchControls){
 				this.moveController.onMousePressed(e);
 				this.shootController.onMousePressed(e);
+				this.confirmCollectButton.click(e.getX(), e.getY());
+				this.explosionButton.click(e.getX(), e.getY());
+				this.healButton.click(e.getX(), e.getY());
 				if (this.shootController.isUsed()){
-					playerShoot(false, this.shootController.getAngle());
+					playerShoot(this.nextExplosion, this.shootController.getAngle());
+					this.nextExplosion = false;
 				}
 			} else if (e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY){
 				playerShoot(e.getButton() == MouseButton.SECONDARY, Math.atan2(e.getY()/MainApplication.SCALE-this.player.getY(), e.getX()/MainApplication.SCALE-this.player.getX()));
@@ -175,6 +185,7 @@ public class GameScreen{
 		canvas.setOnMouseMoved(e -> this.player.pointGun(Math.atan2(e.getY()-this.player.getY(), e.getX()-this.player.getX())));
 		canvas.setOnMouseReleased(e -> {
 			this.moveController.onMouseReleased();
+			this.shootController.onMouseReleased();
 		});
 
 		// Start spawning the zombies
@@ -637,6 +648,10 @@ public class GameScreen{
 				if (this.keys.getOrDefault(KeyCode.D, false)){
 					movement = movement.add(1, 0);
 				}
+				if (this.touchControls && this.moveController.isUsed()){
+					double moveAngle = this.moveController.getAngle();
+					movement = new Point2D(Math.cos(moveAngle), Math.sin(moveAngle));
+				}
 				movement = movement.normalize().multiply(Enemy.SPEED*1.2);
 				this.selectedEnemy.move(movement.getX(), movement.getY(), false);
 				
@@ -769,7 +784,26 @@ public class GameScreen{
 
 		if (this.touchControls){
 			this.moveController.render();
-			this.shootController.render();
+			if (this.playsPlayer){
+				this.shootController.render();
+				if (this.shootController.isUsed()){
+					this.player.pointGun(this.shootController.getAngle());
+					gc.save();
+					gc.setGlobalAlpha(0.6);
+					gc.setFill(Color.WHITE);
+					gc.translate(this.player.getX(), this.player.getY());
+					gc.rotate(Math.toDegrees(this.shootController.getAngle()));
+					double dist = Bullet.getBulletConfig(this.player.getCurrentGun()).getDouble("maxDistance");
+					gc.fillRect(0, -3, dist, 6);
+					gc.restore();
+				}
+				gc.save();
+				gc.setGlobalAlpha(0.7);
+				this.confirmCollectButton.render();
+				this.explosionButton.render();
+				this.healButton.render();
+				gc.restore();
+			}
 		}
 		gc.restore();
 	}

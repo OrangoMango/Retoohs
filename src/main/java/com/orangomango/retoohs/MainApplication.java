@@ -12,9 +12,9 @@ import com.orangomango.retoohs.ui.GameScreen;
 import com.orangomango.retoohs.game.Bullet;
 
 public class MainApplication extends Application{
-	public static final int WIDTH = 500; //1000;
-	public static final int HEIGHT = 300; //600;
-	public static final double SCALE = 0.5;
+	public static final int WIDTH = 1000;
+	public static final int HEIGHT = 600;
+	public static final double SCALE = 1;
 	public static final int FPS = 40;
 	public static Stage stage;
 	public static boolean threadsRunning = true;

@@ -62,14 +62,18 @@ public class Enemy extends GameObject implements GunObject{
 	@Override
 	public boolean move(double x, double y, boolean collision){
 		boolean output = super.move(x, y, collision);
-		if (x > 0){
-			this.overrideDirection = 2;
-		} else if (x < 0){
-			this.overrideDirection = 3;
-		} else if (y > 0){
-			this.overrideDirection = 0;
-		} else if (y < 0){
-			this.overrideDirection = 1;
+		if (Math.abs(x) > Math.abs(y)){
+			if (x > 0){
+				this.overrideDirection = 2;
+			} else if (x < 0){
+				this.overrideDirection = 3;
+			}
+		} else if (Math.abs(x) < Math.abs(y)){
+			if (y > 0){
+				this.overrideDirection = 0;
+			} else if (y < 0){
+				this.overrideDirection = 1;
+			}
 		} else {
 			this.overrideDirection = -1;
 		}
