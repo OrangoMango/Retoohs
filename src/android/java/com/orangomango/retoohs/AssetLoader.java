@@ -11,7 +11,8 @@ public class AssetLoader{
 		String[] images = new String[]{"arrow.png", "background.png", "bonusPoint.png", "bossbar.png", "boss_smash.png", "bullet.png", "button_credits.jpg",
 										"button_home.jpg", "button_play.jpg", "button_resume.jpg", "drop_0.png", "drop_1.png", "drop_2.png", "enemy.png", "exbar.png",
 										"ground.png", "ground_stone_0.png", "ground_stone_1.png", "hpbar.png", "icon.png", "logo.png", "normal_gun.png", "player.png",
-										"restorebar.png", "reverse.png", "warning.png", "icon_sfx.png", "icon_music.png"};
+										"restorebar.png", "reverse.png", "warning.png", "icon_sfx.png", "icon_music.png", "button_confirmpick.png", "button_explosion.png",
+										"button_heal.png"};
 		for (String name : images){
 			this.images.put(name, loadImage(name));
 		}
