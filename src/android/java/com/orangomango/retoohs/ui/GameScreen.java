@@ -172,9 +172,9 @@ public class GameScreen{
 				} else {
 					this.shootController.onMousePressed(e);
 				}
-				this.confirmCollectButton.click(e.getX(), e.getY());
-				this.explosionButton.click(e.getX(), e.getY());
-				this.healButton.click(e.getX(), e.getY());
+				this.confirmCollectButton.click(e.getTouchPoint().getX(), e.getTouchPoint().getY());
+				this.explosionButton.click(e.getTouchPoint().getX(), e.getTouchPoint().getY());
+				this.healButton.click(e.getTouchPoint().getX(), e.getTouchPoint().getY());
 				if (this.shootController.isUsed()){
 					playerShoot(this.nextExplosion, this.shootController.getAngle());
 					this.nextExplosion = false;
@@ -190,6 +190,11 @@ public class GameScreen{
 				this.shootController.onMouseReleased();
 			}
 		});
+
+		canvas.setOnSwipeUp(e -> this.keys.put(KeyCode.UP, true));
+		canvas.setOnSwipeDown(e -> this.keys.put(KeyCode.DOWN, true));
+		canvas.setOnSwipeRight(e -> this.keys.put(KeyCode.RIGHT, true));
+		canvas.setOnSwipeLeft(e -> this.keys.put(KeyCode.LEFT, true));
 
 		// Start spawning the zombies
 		if (!this.doingTutorial){

@@ -26,7 +26,7 @@ import android.content.Context;
 import android.view.View;
 
 public class MainApplication extends Application{
-	public static final int WIDTH = (int)Screen.getPrimary().getVisualBounds().getWidth()-25;
+	public static final int WIDTH = (int)Screen.getPrimary().getVisualBounds().getWidth()-115;
 	public static final int HEIGHT = (int)(WIDTH*0.6);
 	public static final double SCALE = WIDTH/1000.0;
 	public static final int FPS = 40;
@@ -145,7 +145,7 @@ public class MainApplication extends Application{
 		MediaPlayer mp = players.getOrDefault(media, new MediaPlayer());
 		boolean first = false;
 		if (!players.containsKey(media)){
-			players.put(media, mp);
+			if (rep) players.put(media, mp);
 			first = true;
 		}
 		try {
