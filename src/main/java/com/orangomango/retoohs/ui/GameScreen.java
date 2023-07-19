@@ -62,7 +62,7 @@ public class GameScreen{
 	private List<MenuButton> pauseButtons = new ArrayList<>();
 	private int bossesKilled;
 	private UIBar healthBar, exBar, restoreBar, bossBar;
-	private boolean doingTutorial = false, touchControls = false;
+	private boolean doingTutorial, touchControls = false;
 	private Tutorial tutorial;
 	private Runnable onResume;
 	private JoyStick moveController, shootController;
@@ -75,12 +75,13 @@ public class GameScreen{
 	private Image reverseImage = MainApplication.assetLoader.getImage("reverse.png");
 	private volatile int reverseIndex = 0;
 	
-	public GameScreen(){
+	public GameScreen(boolean tutorial){
 		if (instance != null){
 			throw new IllegalStateException("instance != null");
 		}
 		instance = this;
 		this.mediaPlayer = MainApplication.playSound(MainApplication.BACKGROUND_MUSIC, true);
+		this.doingTutorial = tutorial;
 	}
 	
 	public static GameScreen getInstance(){
@@ -518,6 +519,7 @@ public class GameScreen{
 						this.score += 250;
 						tempstop(gc.getCanvas());
 						this.player.setInvulnerable(true);
+						this.drops.clear();
 						MainApplication.schedule(() -> this.player.setInvulnerable(false), 1500);
 						applyTutorial(t -> {
 							if (t.getIndex() == 6){

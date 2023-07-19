@@ -92,6 +92,9 @@ public class Drop{
 				if (GameScreen.getInstance().targetDrop == this){
 					GameScreen.getInstance().targetDrop = null;
 				}
+				if (collision instanceof Enemy){
+					((Enemy)collision).setShooter();
+				}
 			}
 		} else if (diff > MAXTIME){
 			this.exists = false;
