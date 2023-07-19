@@ -62,7 +62,7 @@ public class GameScreen{
 	private List<MenuButton> pauseButtons = new ArrayList<>();
 	private int bossesKilled;
 	private UIBar healthBar, exBar, restoreBar, bossBar;
-	private boolean doingTutorial = false, touchControls = true;
+	private boolean doingTutorial = false, touchControls = false;
 	private Tutorial tutorial;
 	private Runnable onResume;
 	private JoyStick moveController, shootController;
@@ -155,9 +155,9 @@ public class GameScreen{
 
 		this.moveController = new JoyStick(gc, 50, 400);
 		this.shootController = new JoyStick(gc, 800, 400);
-		this.confirmCollectButton = new MenuButton(gc, 550, 500, 50, 50, MainApplication.assetLoader.getImage("warning.png"), () -> this.keys.put(KeyCode.E, true));
-		this.explosionButton = new MenuButton(gc, 625, 500, 50, 50, MainApplication.assetLoader.getImage("warning.png"), () -> this.nextExplosion = true);
-		this.healButton = new MenuButton(gc, 700, 500, 50, 50, MainApplication.assetLoader.getImage("warning.png"), () -> this.keys.put(KeyCode.Q, true));
+		this.confirmCollectButton = new MenuButton(gc, 550, 500, 50, 50, MainApplication.assetLoader.getImage("button_confirmpick.png"), () -> this.keys.put(KeyCode.E, true));
+		this.explosionButton = new MenuButton(gc, 625, 500, 50, 50, MainApplication.assetLoader.getImage("button_explosion.png"), () -> this.nextExplosion = true);
+		this.healButton = new MenuButton(gc, 700, 500, 50, 50, MainApplication.assetLoader.getImage("button_heal.png"), () -> this.keys.put(KeyCode.Q, true));
 		
 		EventHandler<MouseEvent> mouseEvent = e -> {
 			if (this.paused){
