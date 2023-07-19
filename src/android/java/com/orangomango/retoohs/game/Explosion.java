@@ -31,6 +31,7 @@ public class Explosion{
 		Point2D pos = new Point2D(this.x, this.y);
 		for (int i = 0; i < GameScreen.getInstance().getGameObjects().size(); i++){
 			GameObject obj = GameScreen.getInstance().getGameObjects().get(i);
+			if (obj instanceof Player && !GameScreen.getInstance().playsPlayer) continue;
 			if (pos.distance(new Point2D(obj.getX(), obj.getY())) < this.r){
 				obj.damage(this.dmg);
 			}

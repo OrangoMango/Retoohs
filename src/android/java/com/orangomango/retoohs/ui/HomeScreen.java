@@ -51,10 +51,16 @@ public class HomeScreen{
 		this.buttons.add(new MenuButton(gc, 250, 300, 150, 50, MainApplication.assetLoader.getImage("button_play.jpg"), () -> {
 			this.loop.stop();
 			MainApplication.removeMediaPlayer(this.mediaPlayer);
-			GameScreen gs = new GameScreen();
+			GameScreen gs = new GameScreen(false);
 			MainApplication.stage.getScene().setRoot(gs.getLayout());
 		}));
-		this.buttons.add(new MenuButton(gc, 250, 400, 150, 50, MainApplication.assetLoader.getImage("button_credits.jpg"), () -> {
+		this.buttons.add(new MenuButton(gc, 250, 375, 150, 50, MainApplication.assetLoader.getImage("button_play.jpg"), () -> {
+			this.loop.stop();
+			if (this.mediaPlayer != null) this.mediaPlayer.stop();
+			GameScreen gs = new GameScreen(true); // With tutorial
+			MainApplication.stage.getScene().setRoot(gs.getLayout());
+		}));
+		this.buttons.add(new MenuButton(gc, 250, 450, 150, 50, MainApplication.assetLoader.getImage("button_credits.jpg"), () -> {
 			this.loop.stop();
 			MainApplication.removeMediaPlayer(this.mediaPlayer);
 			CreditsScreen cs = new CreditsScreen();
