@@ -22,6 +22,7 @@ public class Reverser{
 				this.blink = !this.blink;
 				if (this.blink && this.makeSound && GameScreen.getInstance().getCurrentBoss() == null){
 					MainApplication.playSound(MainApplication.WARNING_SOUND, false);
+					MainApplication.vibrator.vibrate(150);
 				}
 			}
 		}, 250);

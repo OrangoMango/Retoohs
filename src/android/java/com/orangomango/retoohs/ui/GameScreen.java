@@ -315,6 +315,8 @@ public class GameScreen{
 		MainApplication.schedule(() -> this.cameraShakeY = -5, 200);
 		MainApplication.schedule(() -> this.cameraShakeY = 0, 250);
 		MainApplication.schedule(() -> this.shaking = false, 300);
+		MainApplication.vibrator.vibrate(150);
+
 	}
 	
 	public void tempstop(Canvas canvas){
@@ -553,6 +555,7 @@ public class GameScreen{
 					this.score += 400;
 					this.bossesKilled++;
 					this.bossExtraScore += this.score-this.lastBossScore;
+					MainApplication.vibrator.vibrate(250);
 					changeMusic(MainApplication.BACKGROUND_MUSIC);
 				}
 			}
@@ -727,10 +730,7 @@ public class GameScreen{
 		}
 		
 		if (this.keys.getOrDefault(KeyCode.ESCAPE, false)){
-			quit();
-			HomeScreen hs = new HomeScreen();
-			MainApplication.stage.getScene().setRoot(hs.getLayout());
-			return;
+			this.keys.put(KeyCode.P, true);
 		}
 		
 		gc.restore();

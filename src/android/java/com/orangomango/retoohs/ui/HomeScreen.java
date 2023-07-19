@@ -9,6 +9,7 @@ import javafx.scene.input.MouseButton;
 
 import java.util.*;
 
+import android.media.MediaPlayer;
 import com.orangomango.retoohs.MainApplication;
 
 public class HomeScreen{
@@ -56,7 +57,7 @@ public class HomeScreen{
 		}));
 		this.buttons.add(new MenuButton(gc, 250, 375, 150, 50, MainApplication.assetLoader.getImage("button_play.jpg"), () -> {
 			this.loop.stop();
-			if (this.mediaPlayer != null) this.mediaPlayer.stop();
+			MainApplication.removeMediaPlayer(this.mediaPlayer);
 			GameScreen gs = new GameScreen(true); // With tutorial
 			MainApplication.stage.getScene().setRoot(gs.getLayout());
 		}));
@@ -69,7 +70,10 @@ public class HomeScreen{
 
 		MenuSlider musicSlider = new MenuSlider(gc, 550, 315, 200, 30, MainApplication.assetLoader.getImage("icon_music.png"), v -> {
 			MainApplication.musicVolume = v;
-			//if (this.mediaPlayer != null) this.mediaPlayer.setVolume(v);
+			MediaPlayer mp = MainApplication.players.getOrDefault(this.mediaPlayer, null);
+			if (mp != null){
+				mp.setVolume(v.floatValue(), v.floatValue());
+			}
 		});
 		musicSlider.setProgress(MainApplication.musicVolume);
 		MenuSlider sfxSlider = new MenuSlider(gc, 550, 375, 200, 30, MainApplication.assetLoader.getImage("icon_sfx.png"), v -> MainApplication.sfxVolume = v);

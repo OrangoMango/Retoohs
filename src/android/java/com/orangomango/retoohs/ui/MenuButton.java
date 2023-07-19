@@ -28,6 +28,7 @@ public class MenuButton{
 		Rectangle2D rect = new Rectangle2D(this.x, this.y, this.w, this.h);
 		if (rect.contains(x, y)){
 			this.onClick.run();
+			MainApplication.vibrator.vibrate(150);
 		}
 	}
 	
