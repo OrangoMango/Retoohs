@@ -147,8 +147,8 @@ public class Bullet extends GameObject{
 					for (int i = 0; i < config.getObject("timing").getInteger("amount"); i++){
 						MainApplication.schedule(() -> {
 							Bullet b = new Bullet(gc, shooter, config, x, y, angle+Math.toRadians(o), config.getInteger("damage"));
-	        					if (config.getBoolean("explode")) b.setExplode();
-	        					bullets.add(b);
+	        				if (config.getBoolean("explode")) b.setExplode();
+	        				bullets.add(b);
 						}, config.getObject("timing").getInteger("time"));
 					}
 				}
