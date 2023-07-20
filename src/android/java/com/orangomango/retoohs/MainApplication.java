@@ -26,7 +26,7 @@ import android.content.Context;
 import android.view.View;
 
 public class MainApplication extends Application{
-	public static final int WIDTH = (int)Screen.getPrimary().getVisualBounds().getWidth()-125;
+	public static final int WIDTH = (int)Screen.getPrimary().getVisualBounds().getWidth()-135;
 	public static final int HEIGHT = (int)(WIDTH*0.6);
 	public static final double SCALE = WIDTH/1000.0;
 	public static final int FPS = 40;

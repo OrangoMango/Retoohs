@@ -136,7 +136,7 @@ public class GameScreen{
 		Canvas canvas = new Canvas(MainApplication.WIDTH, MainApplication.HEIGHT);
 		canvas.setFocusTraversable(true);
 		canvas.setOnKeyPressed(e -> {
-			if (e.getCode() == KeyCode.P){
+			if (e.getCode() == KeyCode.ESCAPE){
 				setPause(!this.paused);
 				if (this.paused){
 					this.pausedImage = canvas.snapshot(null, new WritableImage(MainApplication.WIDTH, MainApplication.HEIGHT));
@@ -730,10 +730,6 @@ public class GameScreen{
 		if (this.keys.getOrDefault(KeyCode.R, false) && am != dam){
 			reloadAmmo();
 			this.keys.put(KeyCode.R, false);
-		}
-		
-		if (this.keys.getOrDefault(KeyCode.ESCAPE, false)){
-			this.keys.put(KeyCode.P, true);
 		}
 		
 		gc.restore();
