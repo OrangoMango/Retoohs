@@ -54,7 +54,7 @@ public class HomeScreen{
 			GameScreen gs = new GameScreen(false);
 			MainApplication.stage.getScene().setRoot(gs.getLayout());
 		}));
-		this.buttons.add(new MenuButton(gc, 250, 375, 150, 50, MainApplication.assetLoader.getImage("button_play.jpg"), () -> {
+		this.buttons.add(new MenuButton(gc, 250, 375, 150, 50, MainApplication.assetLoader.getImage("button_play_tutorial.jpg"), () -> {
 			this.loop.stop();
 			if (this.mediaPlayer != null) this.mediaPlayer.stop();
 			GameScreen gs = new GameScreen(true); // With tutorial

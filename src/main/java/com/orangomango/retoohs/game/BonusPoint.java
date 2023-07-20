@@ -94,6 +94,7 @@ public class BonusPoint{
 
 		if (diff > MAXTIME-7500 && GameScreen.getInstance().playsPlayer){
 			gc.setStroke(Color.ORANGE);
+			gc.setLineWidth(5);
 			gc.strokeOval(this.x-this.radius, this.y-this.radius+7, this.radius*2, this.radius*2);
 		}
 	}

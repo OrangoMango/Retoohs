@@ -56,10 +56,10 @@ public class Reverser{
 			gc.drawImage(this.image, 900, 50, 64, 64);
 		}
 		long diff = System.currentTimeMillis()-this.lastTime-GameScreen.getInstance().getPausedTime();
-		if (diff > 25000 && this.startAllowed){
+		if (diff > 15000 && this.startAllowed){
 			this.makeSound = true;
 		}
-		if (diff > 30000 && this.startAllowed && GameScreen.getInstance().getCurrentBoss() == null){
+		if (diff > 20000 && this.startAllowed && GameScreen.getInstance().getCurrentBoss() == null){
 			start();
 		}
 	}
