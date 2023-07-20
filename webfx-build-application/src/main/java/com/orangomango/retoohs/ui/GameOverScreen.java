@@ -16,12 +16,15 @@ public class GameOverScreen{
 	private long time;
 	private int score;
 	private int bossesKilled;
+	private boolean clickAllowed;
 	
 	public GameOverScreen(long time, int s, int b){
 		this.time = time;
 		this.score = s;
 		this.bossesKilled = b;
-		MainApplication.schedule(() -> this.mediaPlayer = MainApplication.playSound(MainApplication.GAMEOVER_BACKGROUND_MUSIC, true), 500);
+		MainApplication.audioPlayed = false;
+		this.mediaPlayer = MainApplication.playSound(MainApplication.GAMEOVER_BACKGROUND_MUSIC, true);
+		MainApplication.schedule(() -> this.clickAllowed = true, 2000);
 	}
 
 	public StackPane getLayout(){
@@ -30,7 +33,7 @@ public class GameOverScreen{
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		
 		canvas.setOnMousePressed(e -> {
-			if (e.getButton() == MouseButton.PRIMARY){
+			if (e.getButton() == MouseButton.PRIMARY && this.clickAllowed){
 				if (this.mediaPlayer != null) this.mediaPlayer.stop();
 				HomeScreen hs = new HomeScreen();
 				MainApplication.stage.getScene().setRoot(hs.getLayout());
@@ -49,9 +52,12 @@ public class GameOverScreen{
 		gc.clearRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
 		gc.setFill(Color.ORANGE);
 		gc.fillRect(0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
+		gc.save();
+		gc.scale(MainApplication.SCALE, MainApplication.SCALE);
 		gc.setFill(Color.BLACK);
 		gc.setFont(GameScreen.FONT_45);
 		gc.setTextAlign(TextAlignment.CENTER);
-		gc.fillText("GAME OVER\n\nYou survived "+(this.time/1000)+" seconds\nwith a score of "+this.score+"\nand killed "+this.bossesKilled+" bosses\n\nClick the screen to exit", MainApplication.WIDTH/2, 125);
+		gc.fillText("GAME OVER\n\nYou survived "+(this.time/1000)+" seconds\nwith a score of "+this.score+"\nand killed "+this.bossesKilled+" bosses\n\nClick the screen to exit", 500, 125);
+		gc.restore();
 	}
 }

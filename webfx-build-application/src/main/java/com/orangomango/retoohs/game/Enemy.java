@@ -11,18 +11,20 @@ import java.util.*;
 import com.orangomango.retoohs.MainApplication;
 import com.orangomango.retoohs.ui.GameScreen;
 
-public class Enemy extends GameObject{
+public class Enemy extends GameObject implements GunObject{
 	public static final double SPEED = 3;
 	private static final int SIZE = 32;
-	private static final Image IMAGE = MainApplication.loadImage("enemy.png");
-	private static final Image ARROW_IMAGE = MainApplication.loadImage("arrow.png");
+	private static final Image IMAGE = MainApplication.assetLoader.getImage("enemy.png");
+	private static final Image ARROW_IMAGE = MainApplication.assetLoader.getImage("arrow.png");
 
 	private GameObject target;
 	private volatile double alpha = 0.5;
 	private boolean shooter, attack = true;
 	private int type;
 	private int dmg;
+	private int overrideDirection = -1;
 	private List<Bullet> bullets = new ArrayList<>();
+	private String currentGun = "enemy_gun";
 	
 	public Enemy(GraphicsContext gc, double x, double y, GameObject target, int type){
 		super(gc, x, y, SIZE+6*type, SIZE+6*type);
@@ -30,8 +32,8 @@ public class Enemy extends GameObject{
 		this.target = target;
 		this.invulnerable = true;
 		this.shooter = Math.random() > 0.7;
-		if (this.shooter) Bullet.applyConfiguration("enemy_gun", null, null, 0, 0, 0, this);
-		this.hp = 10+10*this.type;
+		if (this.shooter) Bullet.applyConfiguration(this.currentGun, null, null, 0, 0, 0, this);
+		this.hp = 10+5*this.type;
 		this.dmg = 10+5*this.type;
 		Scheduler.schedulePeriodic(80, scheduled -> {
 			if (!MainApplication.threadsRunning || this.alpha >= 1){
@@ -42,6 +44,43 @@ public class Enemy extends GameObject{
 			}
 		});
 		startAnimation(5, 150);
+	}
+
+	public void setShooter(){
+		this.shooter = true;
+	}
+
+	@Override
+	public String getCurrentGun(){
+		return this.currentGun;
+	}
+
+	@Override
+	public void setGun(String name){
+		Bullet.configs.remove(this);
+		Bullet.applyConfiguration(name, null, null, 0, 0, 0, this);
+		this.currentGun = name;
+	}
+	
+	@Override
+	public boolean move(double x, double y, boolean collision){
+		boolean output = super.move(x, y, collision);
+		if (Math.abs(x) > Math.abs(y)){
+			if (x > 0){
+				this.overrideDirection = 2;
+			} else if (x < 0){
+				this.overrideDirection = 3;
+			}
+		} else if (Math.abs(x) < Math.abs(y)){
+			if (y > 0){
+				this.overrideDirection = 0;
+			} else if (y < 0){
+				this.overrideDirection = 1;
+			}
+		} else {
+			this.overrideDirection = -1;
+		}
+		return output;
 	}
 	
 	@Override
@@ -66,6 +105,10 @@ public class Enemy extends GameObject{
 		else if (angle >= Math.PI/3 && angle < 2*Math.PI/3) direction = 0;
 		else direction = 3;
 		
+		if (this.overrideDirection >= 0){
+			direction = this.overrideDirection;
+		}
+		
 		gc.drawImage(IMAGE, 1+(SIZE+2)*this.frameIndex, 1+(SIZE+2)*direction, SIZE, SIZE, this.x-this.w/2, this.y-this.h/2, this.w, this.h);
 		
 		double distance = Math.sqrt(Math.pow(this.target.getX()-this.x, 2)+Math.pow(this.target.getY()-this.y, 2));
@@ -73,7 +116,7 @@ public class Enemy extends GameObject{
 			if (GameScreen.getInstance().selectedEnemy != this) move(SPEED*Math.cos(angle), SPEED*Math.sin(angle), true);
 		} else if (this.attack && !this.invulnerable){
 			if (this.shooter){
-				Bullet.applyConfiguration("enemy_gun", this.bullets, this.gc, this.x, this.y, angle, this);
+				Bullet.applyConfiguration(this.currentGun, this.bullets, this.gc, this.x, this.y, angle, this);
 			} else {
 				this.target.damage(this.dmg);
 			}
@@ -88,7 +131,7 @@ public class Enemy extends GameObject{
 		
 		Bullet.ShooterConfig conf = Bullet.configs.getOrDefault(this, null);
 		if (conf != null){
-			Image gunImage = Bullet.gunImages.get("enemy_gun");
+			Image gunImage = Bullet.gunImages.get(this.currentGun);
 			renderGun(gunImage, Math.toDegrees(angle));
 		}
 		

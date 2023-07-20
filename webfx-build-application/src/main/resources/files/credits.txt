@@ -1,4 +1,4 @@
-"Retoohs"
+"Retoohs" (reversed name of "Shooter")
 Game made for the GMTK game jam 2023
 Theme: ROLES REVERSED
 Time: 48h
@@ -15,5 +15,6 @@ freesound.org
 
 Game made using Java and the JavaFX framework
 https://orangomango.itch.io/retoohs
+https://github.com/OrangoMango/Retoohs
 
-Version 1.0, 09/07/2023
+Post-jam update version 2.0

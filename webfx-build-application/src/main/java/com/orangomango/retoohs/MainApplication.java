@@ -18,6 +18,7 @@ import com.orangomango.retoohs.game.Bullet;
 public class MainApplication extends Application{
 	public static final int WIDTH = 1000;
 	public static final int HEIGHT = 600;
+	public static final double SCALE = 1;
 	public static final int FPS = 40;
 	public static Stage stage;
 	public static boolean threadsRunning = true;
@@ -40,6 +41,15 @@ public class MainApplication extends Application{
 	public static AudioClip BOSSSUPER_SOUND;
 	public static AudioClip WARNING_SOUND;
 	public static AudioClip SWOOSH_SOUND;
+	public static double musicVolume = 1;
+	public static double sfxVolume = 1;
+
+	public static AssetLoader assetLoader;
+
+	static {
+		assetLoader = new AssetLoader();
+		assetLoader.loadImages();
+	}
 	
 	@Override
 	public void start(Stage stage){
@@ -53,7 +63,7 @@ public class MainApplication extends Application{
 		stage.setScene(scene);
 		stage.setResizable(false);
 		stage.setTitle("Retoohs by OrangoMango");
-		stage.getIcons().add(loadImage("icon.png"));
+		stage.getIcons().add(assetLoader.getImage("icon.png"));
 		stage.show();
 	}
 
@@ -82,6 +92,7 @@ public class MainApplication extends Application{
 		audioPlayed = true;
 		schedule(() -> audioPlayed = false, 50);
 		MediaPlayer player = new MediaPlayer(media);
+		player.setVolume(musicVolume);
 		if (rep) player.setCycleCount(Animation.INDEFINITE);
 		else player.setOnEndOfMedia(() -> player.dispose());
 		player.play();
@@ -92,6 +103,7 @@ public class MainApplication extends Application{
 		if (audioPlayed) return;
 		audioPlayed = true;
 		schedule(() -> audioPlayed = false, 50);
+		player.setVolume(sfxVolume);
 		if (rep) player.setCycleCount(Animation.INDEFINITE);
 		player.play();
 	}
@@ -108,10 +120,6 @@ public class MainApplication extends Application{
 				scheduled.cancel();
 			}
 		});
-	}
-	
-	public static Image loadImage(String name){
-		return new Image(Resource.toUrl("/images/"+name, MainApplication.class));
 	}
 	
 	public static void main(String[] args){
