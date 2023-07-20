@@ -121,7 +121,7 @@ public class Enemy extends GameObject implements GunObject{
 				this.target.damage(this.dmg);
 			}
 			this.attack = false;
-			MainApplication.schedule(() -> this.attack = true, this.shooter ? 500 : 250);
+			MainApplication.schedule(() -> this.attack = true, this.shooter ? Bullet.getBulletConfig(this.currentGun).getInt("cooldown") : 250);
 		}
 		
 		// Target

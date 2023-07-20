@@ -777,7 +777,7 @@ public class GameScreen{
 		// Time
 		gc.setFill(Color.BLACK);
 		gc.setFont(FONT_30);
-		gc.fillText((diff/60000)+":"+(diff/1000%60), 20, MainApplication.HEIGHT-20);
+		gc.fillText((diff/60000)+":"+formatTimeS(diff/1000%60), 20, MainApplication.HEIGHT-20);
 		
 		this.reverser.render();
 
@@ -805,5 +805,11 @@ public class GameScreen{
 			}
 		}
 		gc.restore();
+	}
+
+	private static String formatTimeS(int sec){
+		if (sec < 10){
+			return "0"+sec;
+		} else return Integer.toString(sec);
 	}
 }

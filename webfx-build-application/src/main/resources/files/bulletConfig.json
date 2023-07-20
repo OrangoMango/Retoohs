@@ -6,7 +6,7 @@
 		"damage" : 15,
 		"ammo" : 100,
 		"ammoAmount" : 1,
-		"cooldown" : 0,
+		"cooldown" : 500,
 		"maxDistance" : 450,
 		"rarity" : -1,
 		"goPast" : false,
