@@ -3,6 +3,7 @@ package com.orangomango.retoohs;
 import javafx.scene.image.Image;
 
 import java.util.*;
+import dev.webfx.platform.resource.Resource;
 
 public class AssetLoader{
 	private Map<String, Image> images = new HashMap<>();

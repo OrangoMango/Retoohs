@@ -76,7 +76,7 @@ public class Drop{
 				break;
 			}
 		}
-		int currentRarity = collision == null ? -1 : Bullet.getBulletConfig(collision.getCurrentGun()).getInt("rarity");
+		int currentRarity = collision == null ? -1 : Bullet.getBulletConfig(collision.getCurrentGun()).getInteger("rarity");
 		if (collision != null && (collision instanceof Player || (!GameScreen.getInstance().playsPlayer && collision instanceof Enemy))){
 			if (this.rarity >= currentRarity || GameScreen.getInstance().getKeys().getOrDefault(KeyCode.E, false) || !GameScreen.getInstance().playsPlayer){
 				String gunName = Bullet.getRandomGun(this.rarity);

@@ -4,14 +4,19 @@ import javafx.scene.canvas.GraphicsContext;
 
 import java.io.*;
 import java.util.*;
-import org.json.JSONObject;
+
+import dev.webfx.platform.json.JsonObject;
+import dev.webfx.platform.json.ReadOnlyJsonObject;
+import dev.webfx.platform.json.Json;
+import dev.webfx.platform.util.keyobject.ReadOnlyIndexedArray;
+import dev.webfx.platform.resource.Resource;
 
 import com.orangomango.retoohs.MainApplication;
 import com.orangomango.retoohs.game.Enemy;
 
 public class Tutorial{
-	private JSONObject json;
-	private List<JSONObject> timeStamps = new ArrayList<>();
+	private JsonObject json;
+	private List<ReadOnlyJsonObject> timeStamps = new ArrayList<>();
 	private int index = -1;
 	private String text;
 	private String command;
@@ -19,17 +24,10 @@ public class Tutorial{
 
 	public Tutorial(GraphicsContext gc){
 		this.gc = gc;
-		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(Tutorial.class.getResourceAsStream("/tutorial.json")));
-			StringBuilder builder = new StringBuilder();
-			reader.lines().forEach(builder::append);
-			reader.close();
-			this.json = new JSONObject(builder.toString());
-			for (Object o : this.json.getJSONArray("timestamps")){
-				this.timeStamps.add((JSONObject)o);
-			}
-		} catch (IOException ex){
-			ex.printStackTrace();
+		this.json = Json.parseObjectSilently(Resource.getText(Resource.toUrl("/files/tutorial.json", Tutorial.class)));
+		for (int i = 0; i < this.json.getArray("timestamps").size(); i++){
+			ReadOnlyJsonObject o = this.json.getArray("timestamps").getObject(i);
+			this.timeStamps.add(o);
 		}
 	}
 
@@ -68,10 +66,10 @@ public class Tutorial{
 
 	public void next(){
 		this.index++;
-		JSONObject obj = this.timeStamps.get(this.index);
+		ReadOnlyJsonObject obj = this.timeStamps.get(this.index);
 		this.text = obj.getString("text");
 		this.command = obj.getString("command");
-		int time = obj.getInt("time");
+		int time = obj.getInteger("time");
 		MainApplication.schedule(() -> {
 			GameScreen.getInstance().setPause(true);
 			GameScreen.getInstance().pausedImage = MainApplication.assetLoader.getImage("background.png");

@@ -108,7 +108,7 @@ public class Bullet extends GameObject{
 	public static String getRandomGun(int rarity){
 		List<String> guns = new ArrayList<>();
 		ReadOnlyIndexedArray iterator = bulletConfig.keys();
-                for (int i = 0; i < iterator.size(); i++){
+        for (int i = 0; i < iterator.size(); i++){
 			String key = iterator.getString(i);
 			int r = getBulletConfig(key).getInteger("rarity");
 			if (r == rarity){

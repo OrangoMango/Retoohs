@@ -11,6 +11,7 @@
     <embed-resources>
 	<resource>files/bulletConfig.json</resource>
 	<resource>files/credits.txt</resource>
+    <resource>files/tutorial.json</resource>
     </embed-resources>
 
     <dependencies>
