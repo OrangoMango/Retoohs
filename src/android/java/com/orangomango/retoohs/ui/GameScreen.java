@@ -276,12 +276,14 @@ public class GameScreen{
 				while (this.gameRunning){
 					if (this.paused) continue;
 					int type = 0;
-					/*if (this.score > 500){
-						int delta = this.score-500;
-						int n = delta/1000;
-						type = random.nextInt(n+1);
+					if (this.playsPlayer){
+						if (this.score > 1000){
+							int delta = this.score-100;
+							int n = delta/2000;
+							type = random.nextInt(n+1);
+						}
+						if (type > 3) type = 3;
 					}
-					if (type > 4) type = 4;*/
 					Enemy e = new Enemy(gc, random.nextInt(800)+100, random.nextInt(400)+100, this.player, type);
 					if (!this.playsPlayer){
 						this.drops.add(new Drop(gc, random.nextInt(800)+100, random.nextInt(400)+100));
@@ -529,6 +531,7 @@ public class GameScreen{
 						tempstop(gc.getCanvas());
 						this.player.setInvulnerable(true);
 						this.drops.clear();
+						this.targetDrop = null;
 						MainApplication.schedule(() -> this.player.setInvulnerable(false), 1500);
 						applyTutorial(t -> {
 							if (t.getIndex() == 6){
@@ -596,7 +599,7 @@ public class GameScreen{
 			}
 		}
 		
-		final double playerSpeed = this.playsPlayer ? 4 : 3;
+		final double playerSpeed = 4;
 		if (this.currentBoss == null && !this.playsPlayer){
 			GameObject nearestEnemy = findNearestEnemy(this.player.getX(), this.player.getY(), Bullet.getBulletConfig(this.player.getCurrentGun()).getDouble("maxDistance"));
 			if (nearestEnemy != null && !nearestEnemy.isInvulnerable()){
