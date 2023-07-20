@@ -278,7 +278,7 @@ public class GameScreen{
 					int type = 0;
 					if (this.playsPlayer){
 						if (this.score > 1000){
-							int delta = this.score-100;
+							int delta = this.score-1000;
 							int n = delta/2000;
 							type = random.nextInt(n+1);
 						}
