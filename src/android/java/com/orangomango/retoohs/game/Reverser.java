@@ -44,7 +44,7 @@ public class Reverser{
 
 	public void tutorialModify(){
 		allowStart();
-		this.lastTime = System.currentTimeMillis()-GameScreen.getInstance().getPausedTime()-25000;
+		this.lastTime = System.currentTimeMillis()-GameScreen.getInstance().getPausedTime()-15000;
 	}
 	
 	public void allowStart(){
