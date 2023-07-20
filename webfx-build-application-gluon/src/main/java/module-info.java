@@ -3,7 +3,7 @@
 module webfx.build.application.gluon {
 
     // Direct dependencies modules
-    requires javafx.media;
+    //requires javafx.media;
     requires webfx.build.application;
     requires webfx.kit.openjfx;
     requires webfx.platform.audio.gluon;

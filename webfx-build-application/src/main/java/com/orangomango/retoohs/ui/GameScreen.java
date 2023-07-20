@@ -270,12 +270,14 @@ public class GameScreen{
 				if (this.gameRunning && MainApplication.threadsRunning){
 					if (this.paused) return;
 					int type = 0;
-                   	if (this.score > 1000){
-                            int delta = this.score-1000;
-   	                        int n = delta/2000;
-           	                type = random.nextInt(n+1);
-                    }
-   	                if (type > 3) type = 3;
+					if (this.playsPlayer){
+						if (this.score > 1000){
+								int delta = this.score-1000;
+								int n = delta/2000;
+								type = random.nextInt(n+1);
+						}
+						if (type > 3) type = 3;
+					}
            	        Enemy e = new Enemy(gc, random.nextInt(800)+100, random.nextInt(400)+100, this.player, type);
 	                if (this.selectedEnemy == null && !this.playsPlayer){
    	                        this.selectedEnemy = e;
@@ -807,9 +809,9 @@ public class GameScreen{
 		gc.restore();
 	}
 
-	private static String formatTimeS(int sec){
+	private static String formatTimeS(long sec){
 		if (sec < 10){
 			return "0"+sec;
-		} else return Integer.toString(sec);
+		} else return Long.toString(sec);
 	}
 }
