@@ -149,7 +149,7 @@ public class Bullet extends GameObject{
 							Bullet b = new Bullet(gc, shooter, config, x, y, angle+Math.toRadians(o), config.getInteger("damage"));
 	        				if (config.getBoolean("explode")) b.setExplode();
 	        				bullets.add(b);
-						}, config.getObject("timing").getInteger("time"));
+						}, config.getObject("timing").getInteger("time")*(i+1));
 					}
 				}
 			}
