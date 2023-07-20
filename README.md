@@ -29,3 +29,11 @@ Each drop may contain a different type of gun depending on its rarity.
 
 **Made in 48h without a game engine, using Java and the JavaFX framework.**
 Post-jam update, 2.0
+
+# Screenshots
+![Polish_20230720_141751626](https://github.com/OrangoMango/Retoohs/assets/61402409/eab462f9-8a0b-4830-b157-6c07ca12de32)
+![Polish_20230720_142343944](https://github.com/OrangoMango/Retoohs/assets/61402409/9e81759f-f926-40d6-a40f-75874fa694e2)
+![Polish_20230720_142415146](https://github.com/OrangoMango/Retoohs/assets/61402409/6443a5a4-f836-41d5-854a-e0d2f4885392)
+![Polish_20230720_142459459](https://github.com/OrangoMango/Retoohs/assets/61402409/50570cfe-12f1-4e0f-aa2b-968d1490630c)
+![Polish_20230720_142546968](https://github.com/OrangoMango/Retoohs/assets/61402409/fb8a357a-6724-4475-9cc1-0f4cbb66dcc6)
+
