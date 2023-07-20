@@ -1,5 +1,5 @@
 # Retoohs
-Retoohs is a reversed shooter game where you are the zombies and you have to kill the player and avoid to let them get points.
+Retoohs is a reversed shooter game where you are the zombies and you have to kill the player and avoid letting them get points.
 
 Available for Windows, Linux, Mac, Browser and Android.  
 **Download and web-build page:** https://orangomango.itch.io/retoohs
