@@ -22,13 +22,15 @@ public class MenuButton{
 		this.onClick = r;
 	}
 	
-	public void click(double x, double y){
+	public boolean click(double x, double y){
 		x /= MainApplication.SCALE;
 		y /= MainApplication.SCALE;
 		Rectangle2D rect = new Rectangle2D(this.x, this.y, this.w, this.h);
 		if (rect.contains(x, y)){
 			this.onClick.run();
+			return true;
 		}
+		return false;
 	}
 	
 	public void render(){
