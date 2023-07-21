@@ -53,7 +53,7 @@ public class GameOverScreen{
 		this.lb = new Leaderboard("https://mangogamesid.000webhostapp.com/games/retoohs/leaderboard.php");
 		updateLead();
 
-		this.submit = new MenuButton(gc, 800, 500, 120, 30, MainApplication.assetLoader.getImage("warning.png"), () -> {
+		this.submit = new MenuButton(gc, 800, 500, 120, 30, MainApplication.assetLoader.getImage("button_submit.png"), () -> {
 			TextInputDialog dialog = new TextInputDialog();
 			dialog.setTitle("Submit score");
 			dialog.setHeaderText("Enter username");
@@ -100,7 +100,7 @@ public class GameOverScreen{
 		gc.setFill(Color.BLACK);
 		gc.setFont(GameScreen.FONT_30);
 		gc.setTextAlign(TextAlignment.CENTER);
-		gc.fillText("GAME OVER\n\nYou survived "+(this.time/1000)+" seconds\nwith a score of "+this.score+"\nand killed "+this.bossesKilled+" bosses\n\nClick the screen to exit", 300, 155);
+		gc.fillText("GAME OVER\n\nYou survived "+(this.time/1000)+" seconds\nwith a score of "+this.score+"\nand killed "+this.bossesKilled+" bosses\n\nClick the screen to exit", 300, 175);
 		this.submit.render();
 		
 		gc.setFill(Color.BLUE);

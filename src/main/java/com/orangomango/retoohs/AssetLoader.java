@@ -12,7 +12,7 @@ public class AssetLoader{
 										"button_home.jpg", "button_play.jpg", "button_resume.jpg", "drop_0.png", "drop_1.png", "drop_2.png", "enemy.png", "exbar.png",
 										"ground.png", "ground_stone_0.png", "ground_stone_1.png", "hpbar.png", "icon.png", "logo.png", "normal_gun.png", "player.png",
 										"restorebar.png", "reverse.png", "warning.png", "icon_sfx.png", "icon_music.png", "button_confirmpick.png", "button_explosion.png",
-										"button_heal.png", "button_play_tutorial.jpg"};
+										"button_heal.png", "button_play_tutorial.jpg", "button_submit.png"};
 		for (String name : images){
 			this.images.put(name, loadImage(name));
 		}

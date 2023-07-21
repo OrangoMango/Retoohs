@@ -173,8 +173,8 @@ public class GameScreen{
 				this.confirmCollectButton.click(e.getX(), e.getY());
 				this.explosionButton.click(e.getX(), e.getY());
 				this.healButton.click(e.getX(), e.getY());
-				if (this.shootController.isUsed()){
-					playerShoot(this.nextExplosion, this.shootController.getAngle());
+				if (this.shootController.isUsed() && !this.nextExplosion){
+					playerShoot(false, this.shootController.getAngle());
 					this.nextExplosion = false;
 				}
 			} else if (e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY){
@@ -185,6 +185,10 @@ public class GameScreen{
 		canvas.setOnMouseDragged(mouseEvent);
 		canvas.setOnMouseMoved(e -> this.player.pointGun(Math.atan2(e.getY()-this.player.getY(), e.getX()-this.player.getX())));
 		canvas.setOnMouseReleased(e -> {
+			if (this.shootController.isUsed() && this.nextExplosion){
+				playerShoot(true, this.shootController.getAngle());
+				this.nextExplosion = false;
+			}
 			this.moveController.onMouseReleased();
 			this.shootController.onMouseReleased();
 		});
@@ -337,8 +341,8 @@ public class GameScreen{
 		this.gameRunning = false;
 		MainApplication.threadsRunning = false;
 		MainApplication.schedule(() -> MainApplication.threadsRunning = true, 500);
-		GameScreen.instance = null;
 		this.player.stopAnimation();
+		GameScreen.instance = null;
 		if (this.mediaPlayer != null){
 			this.mediaPlayer.stop();
 		}
@@ -535,6 +539,7 @@ public class GameScreen{
 				i--;
 				if (!this.playsPlayer){
 					this.score -= 5;
+					this.player.heal(5);
 				}
 				if (obj instanceof Enemy){
 					if (this.gameObjects.size() == 1 && this.tutorial.getIndex() == 2){
@@ -795,7 +800,7 @@ public class GameScreen{
 					this.player.pointGun(this.shootController.getAngle());
 					gc.save();
 					gc.setGlobalAlpha(0.6);
-					gc.setFill(Color.WHITE);
+					gc.setFill(this.nextExplosion ? Color.ORANGE : Color.WHITE);
 					gc.translate(this.player.getX(), this.player.getY());
 					gc.rotate(Math.toDegrees(this.shootController.getAngle()));
 					double dist = Bullet.getBulletConfig(this.player.getCurrentGun()).getDouble("maxDistance");
