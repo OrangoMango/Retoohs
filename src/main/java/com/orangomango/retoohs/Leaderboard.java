@@ -37,6 +37,9 @@ public class Leaderboard{
 	}
 
 	public List<Map.Entry<String, Integer>> getEntries(){
+		if (this.json == null){
+			return null;
+		}
 		Map<String, Integer> lead = new HashMap<>();
 		for (Object o : this.json.getJSONArray("data")){
 			JSONObject j = (JSONObject)o;

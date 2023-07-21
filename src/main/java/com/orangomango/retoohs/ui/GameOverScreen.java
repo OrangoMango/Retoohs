@@ -58,7 +58,7 @@ public class GameOverScreen{
 			dialog.setTitle("Submit score");
 			dialog.setHeaderText("Enter username");
 			dialog.showAndWait().ifPresent(v -> {
-				if (!v.equals("")){
+				if (!v.equals("") && this.output != null){
 					boolean allow = true;
 					for (Map.Entry<String, Integer> entry : this.output){
 						if (entry.getKey().equals(v)){
@@ -111,9 +111,9 @@ public class GameOverScreen{
 				if (i == 10) break;
 				builder.append(++i).append(". ").append(entry.getKey()).append(" -> ").append(entry.getValue()).append("\n");
 			}
-			gc.fillText(builder.toString(), 775, 125);
+			gc.fillText(builder.toString(), 750, 125);
 		} else {
-			gc.fillText("Loading leaderboard...", 775, 125);
+			gc.fillText("Loading leaderboard...", 750, 125);
 		}
 
 		gc.restore();
