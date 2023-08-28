@@ -50,7 +50,7 @@ public class GameOverScreen{
 			}
 		});
 
-		this.lb = new Leaderboard("https://mangogamesid.000webhostapp.com/games/retoohs/leaderboard.php");
+		this.lb = new Leaderboard("http://127.0.0.1/games/leaderboard/leaderboard.php"); // https://mangogamesid.000webhostapp.com/games/retoohs/leaderboard.php
 		updateLead();
 
 		this.submit = new MenuButton(gc, 800, 500, 120, 30, MainApplication.assetLoader.getImage("button_submit.png"), () -> {

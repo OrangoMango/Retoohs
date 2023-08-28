@@ -712,13 +712,15 @@ public class GameScreen{
 		
 		if ((this.keys.getOrDefault(KeyCode.Q, false) && this.player.getHP() < 90) || this.player.getHP() < 40){
 			// heal
-			long hdiff = System.currentTimeMillis()-this.lastHeal;
-			if (hdiff > 30000){
-				MainApplication.playSound(MainApplication.HEAL_SOUND, false);
-				this.player.heal(60);
-				this.lastHeal = System.currentTimeMillis();
+			if (this.playsPlayer){
+				long hdiff = System.currentTimeMillis()-this.lastHeal;
+				if (hdiff > 30000){
+					MainApplication.playSound(MainApplication.HEAL_SOUND, false);
+					this.player.heal(60);
+					this.lastHeal = System.currentTimeMillis();
+				}
+				this.keys.put(KeyCode.Q, false);
 			}
-			this.keys.put(KeyCode.Q, false);
 		}
 		int am = Bullet.configs.get(this.player).getAmmo();
 		int dam = Bullet.configs.get(this.player).getDefaultAmmo();

@@ -19,10 +19,12 @@ public class CreditsScreen{
 	private double scroll;
 	private String credits;
 	private MediaPlayer mediaPlayer;
+	private boolean clickAllowed;
 	private Image background = MainApplication.assetLoader.getImage("background.png");
 	
 	public CreditsScreen(){
 		this.mediaPlayer = MainApplication.playSound(MainApplication.MENU_BACKGROUND_MUSIC, true);
+		MainApplication.schedule(() -> this.clickAllowed = true, 1500);
 	}
 	
 	public StackPane getLayout(){
@@ -31,7 +33,7 @@ public class CreditsScreen{
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		
 		canvas.setOnMousePressed(e -> {
-			if (e.getButton() == MouseButton.PRIMARY){
+			if (e.getButton() == MouseButton.PRIMARY && this.clickAllowed){
 				this.loop.stop();
 				if (this.mediaPlayer != null) this.mediaPlayer.stop();
 				HomeScreen hs = new HomeScreen();
