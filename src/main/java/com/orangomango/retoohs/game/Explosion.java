@@ -38,7 +38,7 @@ public class Explosion{
 		}
 		this.r += 5;
 		if (this.r > 100){
-			MainApplication.playSound(MainApplication.EXPLOSION_SOUND, false);
+			MainApplication.playSound("explosion.wav", false);
 			this.exists = false;
 		}
 	}

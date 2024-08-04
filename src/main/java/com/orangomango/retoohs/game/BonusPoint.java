@@ -8,6 +8,7 @@ import javafx.geometry.Rectangle2D;
 import java.util.Random;
 
 import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.AssetLoader;
 import com.orangomango.retoohs.ui.GameScreen;
 
 public class BonusPoint{
@@ -16,7 +17,7 @@ public class BonusPoint{
 	private long startTime;
 	private volatile int extraY;
 	private boolean forward = true;
-	private Image image = MainApplication.assetLoader.getImage("bonusPoint.png");
+	private Image image = AssetLoader.getInstance().getImage("bonusPoint.png");
 	private int localPausedTime;
 	private double radius = 15;
 
@@ -73,7 +74,7 @@ public class BonusPoint{
 		if (thisRect.intersects(playerRect)){
 			GameScreen.getInstance().score += 50*(GameScreen.getInstance().playsPlayer ? 1 : -1);
 			player.heal(10);
-			MainApplication.playSound(MainApplication.SCORE_SOUND, false);
+			MainApplication.playSound("score.wav", false);
 			GameScreen.getInstance().applyTutorial(t -> {
 				if (t.getIndex() == 0){
 					t.trigger();
@@ -82,7 +83,7 @@ public class BonusPoint{
 			relocate();
 		} else if (diff > MAXTIME){
 			GameScreen.getInstance().score -= 150*(GameScreen.getInstance().playsPlayer ? 1 : -1);
-			MainApplication.playSound(MainApplication.SCORELOST_SOUND, false);
+			MainApplication.playSound("score_lost.wav", false);
 			relocate();
 		}
 		gc.setFill(Color.YELLOW);

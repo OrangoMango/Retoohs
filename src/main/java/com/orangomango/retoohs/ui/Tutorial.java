@@ -7,6 +7,7 @@ import java.util.*;
 import org.json.JSONObject;
 
 import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.AssetLoader;
 import com.orangomango.retoohs.game.Enemy;
 
 public class Tutorial{
@@ -20,7 +21,7 @@ public class Tutorial{
 	public Tutorial(GraphicsContext gc){
 		this.gc = gc;
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(Tutorial.class.getResourceAsStream("/tutorial.json")));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(Tutorial.class.getResourceAsStream("/files/tutorial.json")));
 			StringBuilder builder = new StringBuilder();
 			reader.lines().forEach(builder::append);
 			reader.close();
@@ -74,7 +75,7 @@ public class Tutorial{
 		int time = obj.getInt("time");
 		MainApplication.schedule(() -> {
 			GameScreen.getInstance().setPause(true);
-			GameScreen.getInstance().pausedImage = MainApplication.assetLoader.getImage("background.png");
+			GameScreen.getInstance().pausedImage = AssetLoader.getInstance().getImage("background.png");
 			if (!this.command.startsWith("finish")){
 				trigger();
 			}

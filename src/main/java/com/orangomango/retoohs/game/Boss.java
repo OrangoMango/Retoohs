@@ -7,6 +7,7 @@ import java.util.Random;
 
 import com.orangomango.retoohs.ui.GameScreen;
 import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.AssetLoader;
 
 public class Boss extends GameObject{
 	private static final double SPEED = 1;
@@ -15,7 +16,7 @@ public class Boss extends GameObject{
 	private double speed;
 	private long lastSuper;
 	private Double fixedAngle;
-	private Image image = MainApplication.assetLoader.getImage("boss_smash.png");
+	private Image image = AssetLoader.getInstance().getImage("boss_smash.png");
 	private int smashFrameIndex;
 	private boolean smash;
 
@@ -42,7 +43,7 @@ public class Boss extends GameObject{
 	private void makeSuper(){
 		Random random = new Random();
 		int n = random.nextInt(2);
-		MainApplication.playSound(MainApplication.BOSSSUPER_SOUND, false);
+		MainApplication.playSound("boss_super.wav", false);
 		this.hp += 50;
 		if (this.hp > HEALTH) this.hp = HEALTH;
 		switch (n){

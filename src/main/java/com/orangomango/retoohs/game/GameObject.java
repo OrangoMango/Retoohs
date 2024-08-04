@@ -50,14 +50,14 @@ public abstract class GameObject{
 		this.damage = false;
 		this.hp -= dmg;
 		if (this instanceof Player){
-			MainApplication.playSound(MainApplication.DAMAGE_SOUND, false);
+			MainApplication.playSound("damage.wav", false);
 			GameScreen.getInstance().screenShake();
 			if (!GameScreen.getInstance().playsPlayer){
 				GameScreen.getInstance().score += dmg;
 				GameScreen.getInstance().getFloatingTexts().add(new FloatingText(this.gc, Integer.toString(dmg), this.x, this.y));
 			}
 		} else {
-			if (this instanceof Boss) MainApplication.playSound(MainApplication.BOSSHIT_SOUND, false);
+			if (this instanceof Boss) MainApplication.playSound("boss_hit.wav", false);
 			if (GameScreen.getInstance().playsPlayer) GameScreen.getInstance().score += dmg;
 			GameScreen.getInstance().getFloatingTexts().add(new FloatingText(this.gc, Integer.toString(dmg), this.x, this.y));
 		}

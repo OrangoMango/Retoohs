@@ -4,11 +4,12 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.AssetLoader;
 import com.orangomango.retoohs.ui.GameScreen;
 
 public class Reverser{
 	private GraphicsContext gc;
-	private Image image = MainApplication.assetLoader.getImage("warning.png");
+	private Image image = AssetLoader.getInstance().getImage("warning.png");
 	private volatile boolean blink;
 	private long lastTime;
 	private boolean startAllowed = true;
@@ -21,7 +22,7 @@ public class Reverser{
 			if (!GameScreen.getInstance().isPaused()){
 				this.blink = !this.blink;
 				if (this.blink && this.makeSound && GameScreen.getInstance().getCurrentBoss() == null){
-					MainApplication.playSound(MainApplication.WARNING_SOUND, false);
+					MainApplication.playSound("warning.wav", false);
 				}
 			}
 		}, 250);

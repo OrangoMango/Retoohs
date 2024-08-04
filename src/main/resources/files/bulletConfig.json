@@ -7,7 +7,7 @@
 		"ammo" : 100,
 		"ammoAmount" : 1,
 		"cooldown" : 500,
-		"maxDistance" : 450,
+		"maxDistance" : 650,
 		"rarity" : -1,
 		"goPast" : false,
 		"explode" : false,

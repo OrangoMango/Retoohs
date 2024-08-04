@@ -7,6 +7,7 @@ import javafx.scene.input.KeyCode;
 import javafx.geometry.Rectangle2D;
 
 import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.AssetLoader;
 import com.orangomango.retoohs.ui.GameScreen;
 
 public class Drop{
@@ -20,9 +21,9 @@ public class Drop{
 	
 	private static final double SIZE = 20;
 	private static final int MAXTIME = 15000;
-	private static final Image IMAGE_COMMON = MainApplication.assetLoader.getImage("drop_0.png");
-	private static final Image IMAGE_EPIC = MainApplication.assetLoader.getImage("drop_1.png");
-	private static final Image IMAGE_LEGENDARY = MainApplication.assetLoader.getImage("drop_2.png");
+	private static final Image IMAGE_COMMON = AssetLoader.getInstance().getImage("drop_0.png");
+	private static final Image IMAGE_EPIC = AssetLoader.getInstance().getImage("drop_1.png");
+	private static final Image IMAGE_LEGENDARY = AssetLoader.getInstance().getImage("drop_2.png");
 	
 	public Drop(GraphicsContext gc, double x, double y){
 		this.gc = gc;
@@ -80,7 +81,7 @@ public class Drop{
 		if (collision != null && (collision instanceof Player || (!GameScreen.getInstance().playsPlayer && collision instanceof Enemy))){
 			if (this.rarity >= currentRarity || GameScreen.getInstance().getKeys().getOrDefault(KeyCode.E, false) || !GameScreen.getInstance().playsPlayer){
 				String gunName = Bullet.getRandomGun(this.rarity);
-				MainApplication.playSound(MainApplication.DROP_SOUND, false);
+				MainApplication.playSound("drop.wav", false);
 				collision.setGun(gunName);
 				GameScreen.getInstance().getFloatingTexts().add(new FloatingText(this.gc, gunName.replace("_", " "), this.x-5, this.y));
 				this.exists = false;

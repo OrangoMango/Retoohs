@@ -7,13 +7,14 @@ import javafx.scene.effect.Glow;
 import java.util.*;
 
 import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.AssetLoader;
 import com.orangomango.retoohs.ui.GameScreen;
 
 public class Enemy extends GameObject implements GunObject{
 	public static final double SPEED = 3;
 	private static final int SIZE = 32;
-	private static final Image IMAGE = MainApplication.assetLoader.getImage("enemy.png");
-	private static final Image ARROW_IMAGE = MainApplication.assetLoader.getImage("arrow.png");
+	private static final Image IMAGE = AssetLoader.getInstance().getImage("enemy.png");
+	private static final Image ARROW_IMAGE = AssetLoader.getInstance().getImage("arrow.png");
 
 	private GameObject target;
 	private volatile double alpha = 0.5;
@@ -29,7 +30,7 @@ public class Enemy extends GameObject implements GunObject{
 		this.type = type;
 		this.target = target;
 		this.invulnerable = true;
-		this.shooter = Math.random() > 0.7;
+		this.shooter = GameScreen.getInstance().playsPlayer ? Math.random() > 0.7 : Math.random() > 0.2;
 		if (this.shooter) Bullet.applyConfiguration(this.currentGun, null, null, 0, 0, 0, this);
 		this.hp = 10+5*this.type;
 		this.dmg = 10+5*this.type;

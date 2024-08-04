@@ -13,6 +13,7 @@ import javafx.scene.media.MediaPlayer;
 import java.io.*;
 
 import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.AssetLoader;
 
 public class CreditsScreen{
 	private Timeline loop;
@@ -20,10 +21,10 @@ public class CreditsScreen{
 	private String credits;
 	private MediaPlayer mediaPlayer;
 	private boolean clickAllowed;
-	private Image background = MainApplication.assetLoader.getImage("background.png");
+	private Image background = AssetLoader.getInstance().getImage("background.png");
 	
 	public CreditsScreen(){
-		this.mediaPlayer = MainApplication.playSound(MainApplication.MENU_BACKGROUND_MUSIC, true);
+		this.mediaPlayer = MainApplication.playMusic("menu_background.wav");
 		MainApplication.schedule(() -> this.clickAllowed = true, 1500);
 	}
 	
@@ -43,7 +44,7 @@ public class CreditsScreen{
 		
 		try {
 			StringBuilder builder = new StringBuilder();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(MainApplication.class.getResourceAsStream("/credits.txt")));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(MainApplication.class.getResourceAsStream("/files/credits.txt")));
 			reader.lines().forEach(line -> builder.append(line).append("\n"));
 			reader.close();
 			this.credits = builder.toString();
@@ -64,7 +65,7 @@ public class CreditsScreen{
 		gc.drawImage(this.background, 0, 0, MainApplication.WIDTH, MainApplication.HEIGHT);
 		gc.save();
 		gc.scale(MainApplication.SCALE, MainApplication.SCALE);
-		gc.setFill(Color.BLACK);
+		gc.setFill(Color.WHITE);
 		gc.save();
 		gc.setFont(GameScreen.FONT_30);
 		gc.setTextAlign(TextAlignment.CENTER);

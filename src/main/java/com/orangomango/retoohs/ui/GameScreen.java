@@ -21,14 +21,15 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.AssetLoader;
 import com.orangomango.retoohs.game.*;
 import com.orangomango.retoohs.ui.UIBar;
 
 public class GameScreen{
 	private static GameScreen instance = null;
-	public static final Font FONT_45 = Font.loadFont(GameScreen.class.getResourceAsStream("/main_font.ttf"), 45);
-	public static final Font FONT_30 = Font.loadFont(GameScreen.class.getResourceAsStream("/main_font.ttf"), 30);
-	public static final Font FONT_15 = Font.loadFont(GameScreen.class.getResourceAsStream("/main_font.ttf"), 15);
+	public static final Font FONT_45 = Font.loadFont(GameScreen.class.getResourceAsStream("/files/main_font.ttf"), 45);
+	public static final Font FONT_30 = Font.loadFont(GameScreen.class.getResourceAsStream("/files/main_font.ttf"), 30);
+	public static final Font FONT_15 = Font.loadFont(GameScreen.class.getResourceAsStream("/files/main_font.ttf"), 15);
 	private static final int BOSS_SCORE = 1500;
 	
 	private List<GameObject> gameObjects = new ArrayList<>();
@@ -69,10 +70,10 @@ public class GameScreen{
 	private MenuButton confirmCollectButton, explosionButton, healButton;
 	private boolean nextExplosion;
 	
-	private Image groundImage = MainApplication.assetLoader.getImage("ground.png");
-	private Image[] stoneGroundImages = new Image[]{MainApplication.assetLoader.getImage("ground_stone_0.png"), MainApplication.assetLoader.getImage("ground_stone_1.png")};
+	private Image groundImage = AssetLoader.getInstance().getImage("ground.png");
+	private Image[] stoneGroundImages = new Image[]{AssetLoader.getInstance().getImage("ground_stone_0.png"), AssetLoader.getInstance().getImage("ground_stone_1.png")};
 	private int[][] groundPattern;
-	private Image reverseImage = MainApplication.assetLoader.getImage("reverse.png");
+	private Image reverseImage = AssetLoader.getInstance().getImage("reverse.png");
 	private volatile int reverseIndex = 0;
 	
 	public GameScreen(boolean tutorial){
@@ -80,7 +81,7 @@ public class GameScreen{
 			throw new IllegalStateException("instance != null");
 		}
 		instance = this;
-		this.mediaPlayer = MainApplication.playSound(MainApplication.BACKGROUND_MUSIC, true);
+		this.mediaPlayer = MainApplication.playMusic("background.wav");
 		this.doingTutorial = tutorial;
 	}
 	
@@ -156,9 +157,9 @@ public class GameScreen{
 
 		this.moveController = new JoyStick(gc, 50, 400);
 		this.shootController = new JoyStick(gc, 800, 400);
-		this.confirmCollectButton = new MenuButton(gc, 550, 500, 50, 50, MainApplication.assetLoader.getImage("button_confirmpick.png"), () -> this.keys.put(KeyCode.E, true));
-		this.explosionButton = new MenuButton(gc, 625, 500, 50, 50, MainApplication.assetLoader.getImage("button_explosion.png"), () -> this.nextExplosion = true);
-		this.healButton = new MenuButton(gc, 700, 500, 50, 50, MainApplication.assetLoader.getImage("button_heal.png"), () -> this.keys.put(KeyCode.Q, true));
+		this.confirmCollectButton = new MenuButton(gc, 550, 500, 50, 50, AssetLoader.getInstance().getImage("button_confirmpick.png"), () -> this.keys.put(KeyCode.E, true));
+		this.explosionButton = new MenuButton(gc, 625, 500, 50, 50, AssetLoader.getInstance().getImage("button_explosion.png"), () -> this.nextExplosion = true);
+		this.healButton = new MenuButton(gc, 700, 500, 50, 50, AssetLoader.getInstance().getImage("button_heal.png"), () -> this.keys.put(KeyCode.Q, true));
 		
 		EventHandler<MouseEvent> mouseEvent = e -> {
 			if (this.paused){
@@ -215,20 +216,20 @@ public class GameScreen{
 		
 		this.startTime = System.currentTimeMillis();
 		
-		Image homeButtonImage = MainApplication.assetLoader.getImage("button_home.jpg");
+		Image homeButtonImage = AssetLoader.getInstance().getImage("button_home.jpg");
 		this.pauseButtons.add(new MenuButton(gc, 420, 450, 64, 64, homeButtonImage, () -> {
 			quit();
 			HomeScreen hs = new HomeScreen();
 			MainApplication.stage.getScene().setRoot(hs.getLayout());
 		}));
-		Image resumeButtonImage = MainApplication.assetLoader.getImage("button_resume.jpg");
+		Image resumeButtonImage = AssetLoader.getInstance().getImage("button_resume.jpg");
 		this.pauseButtons.add(new MenuButton(gc, 520, 450, 64, 64, resumeButtonImage, () -> setPause(false)));
 
 		// UI bars
-		Image hpImage = MainApplication.assetLoader.getImage("hpbar.png");
-		Image exImage = MainApplication.assetLoader.getImage("exbar.png");
-		Image restoreImage = MainApplication.assetLoader.getImage("restorebar.png");
-		Image bossbarImage = MainApplication.assetLoader.getImage("bossbar.png");
+		Image hpImage = AssetLoader.getInstance().getImage("hpbar.png");
+		Image exImage = AssetLoader.getInstance().getImage("exbar.png");
+		Image restoreImage = AssetLoader.getInstance().getImage("restorebar.png");
+		Image bossbarImage = AssetLoader.getInstance().getImage("bossbar.png");
 		this.healthBar = new UIBar(gc, 20, 60, 200, 30, hpImage, Color.GREEN, 23, 5, 175, 20);
 		this.exBar = new UIBar(gc, 20, 95, 200, 30, exImage, Color.YELLOW, 23, 5, 175, 20);
 		this.restoreBar = new UIBar(gc, 20, 130, 200, 30, restoreImage, Color.CYAN, 23, 5, 175, 20);
@@ -298,10 +299,10 @@ public class GameScreen{
 		spawner.start();
 	}
 	
-	private void changeMusic(Media music){
+	private void changeMusic(String musicName){
 		if (this.mediaPlayer != null) this.mediaPlayer.stop();
 		MainApplication.audioPlayed = false;
-		this.mediaPlayer = MainApplication.playSound(music, true);
+		this.mediaPlayer = MainApplication.playMusic(musicName);
 	}
 	
 	public void screenShake(){
@@ -318,7 +319,7 @@ public class GameScreen{
 		setPause(true);
 		this.tempStopped = true;
 		this.pausedImage = canvas.snapshot(null, new WritableImage(MainApplication.WIDTH, MainApplication.HEIGHT));
-		MainApplication.playSound(MainApplication.SWOOSH_SOUND, false);
+		MainApplication.playSound("swoosh.wav", false);
 		Timeline anim = new Timeline(new KeyFrame(Duration.millis(100), e -> this.reverseIndex++));
 		anim.setCycleCount(5);
 		anim.setOnFinished(e -> this.reverseIndex = 0);
@@ -333,7 +334,7 @@ public class GameScreen{
 		this.currentBoss = new Boss(gc, 600, 300);
 		this.gameObjects.add(this.currentBoss);
 		this.lastBossScore = this.score;
-		changeMusic(MainApplication.BOSS_BACKGROUND_MUSIC);
+		changeMusic("boss_battle_background.wav");
 	}
 	
 	public void quit(){
@@ -373,7 +374,7 @@ public class GameScreen{
 	
 	private void reloadAmmo(){
 		Bullet.configs.get(this.player).reload();
-		MainApplication.playSound(MainApplication.RELOAD_SOUND, false);
+		MainApplication.playSound("ammo_reload.wav", false);
 	}
 	
 	private GameObject findNearestEnemy(double x, double y, double dist){
@@ -513,7 +514,7 @@ public class GameScreen{
 				}
 				if (obj instanceof Player){
 					if (this.playsPlayer){
-						MainApplication.playSound(MainApplication.DEATH_SOUND, false);
+						MainApplication.playSound("death.wav", false);
 						quit();
 						GameOverScreen gos = new GameOverScreen(diff, this.score, this.bossesKilled);
 						MainApplication.stage.getScene().setRoot(gos.getLayout());
@@ -553,8 +554,8 @@ public class GameScreen{
 					this.currentBoss = null;
 					this.score += 400;
 					this.bossesKilled++;
-					this.bossExtraScore += this.score-this.lastBossScore;
-					changeMusic(MainApplication.BACKGROUND_MUSIC);
+					this.bossExtraScore += Math.max(this.score-this.lastBossScore, 0);
+					changeMusic("background.wav");
 				}
 			}
 		}
@@ -662,7 +663,7 @@ public class GameScreen{
 					double moveAngle = this.moveController.getAngle();
 					movement = new Point2D(Math.cos(moveAngle), Math.sin(moveAngle));
 				}
-				movement = movement.normalize().multiply(Enemy.SPEED*1.2);
+				movement = movement.normalize().multiply(Enemy.SPEED*1.4);
 				this.selectedEnemy.move(movement.getX(), movement.getY(), false);
 				
 				if (this.keys.getOrDefault(KeyCode.UP, false)){
@@ -715,7 +716,7 @@ public class GameScreen{
 			if (this.playsPlayer){
 				long hdiff = System.currentTimeMillis()-this.lastHeal;
 				if (hdiff > 30000){
-					MainApplication.playSound(MainApplication.HEAL_SOUND, false);
+					MainApplication.playSound("extra_life.wav", false);
 					this.player.heal(60);
 					this.lastHeal = System.currentTimeMillis();
 				}
@@ -776,7 +777,7 @@ public class GameScreen{
 			gc.strokeRect(400, 40, 450, 40);
 		} else {
 			// Boss bar
-			this.bossBar.setProgress(((this.score-this.bossExtraScore)%BOSS_SCORE/(double)(BOSS_SCORE)));
+			this.bossBar.setProgress(((this.score-this.bossExtraScore)%BOSS_SCORE/(double)BOSS_SCORE));
 			this.bossBar.render();
 		}
 		

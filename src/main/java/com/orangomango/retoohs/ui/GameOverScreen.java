@@ -14,6 +14,7 @@ import java.util.*;
 
 import com.orangomango.retoohs.MainApplication;
 import com.orangomango.retoohs.Leaderboard;
+import com.orangomango.retoohs.AssetLoader;
 
 public class GameOverScreen{
 	private MediaPlayer mediaPlayer;
@@ -30,7 +31,7 @@ public class GameOverScreen{
 		this.score = s;
 		this.bossesKilled = b;
 		MainApplication.audioPlayed = false;
-		this.mediaPlayer = MainApplication.playSound(MainApplication.GAMEOVER_BACKGROUND_MUSIC, true);
+		this.mediaPlayer = MainApplication.playMusic("gameover_background.wav");
 		MainApplication.schedule(() -> this.clickAllowed = true, 2000);
 	}
 
@@ -53,7 +54,7 @@ public class GameOverScreen{
 		this.lb = new Leaderboard("http://127.0.0.1/games/leaderboard/leaderboard.php"); // https://mangogamesid.000webhostapp.com/games/retoohs/leaderboard.php
 		updateLead();
 
-		this.submit = new MenuButton(gc, 800, 500, 120, 30, MainApplication.assetLoader.getImage("button_submit.png"), () -> {
+		this.submit = new MenuButton(gc, 800, 500, 120, 30, AssetLoader.getInstance().getImage("button_submit.png"), () -> {
 			TextInputDialog dialog = new TextInputDialog();
 			dialog.setTitle("Submit score");
 			dialog.setHeaderText("Enter username");

@@ -10,6 +10,7 @@ import javafx.scene.effect.Glow;
 import java.util.*;
 
 import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.AssetLoader;
 import com.orangomango.retoohs.ui.GameScreen;
 
 public class Player extends GameObject implements GunObject{
@@ -47,8 +48,8 @@ public class Player extends GameObject implements GunObject{
 	private Timeline animation;
 	private double pointAngle;
 	private volatile Point2D frameIndex = currentState.getStartPoint();
-	private static Image IMAGE = MainApplication.assetLoader.getImage("player.png");
-	private static final Image ARROW_IMAGE = MainApplication.assetLoader.getImage("arrow.png");
+	private static Image IMAGE = AssetLoader.getInstance().getImage("player.png");
+	private static final Image ARROW_IMAGE = AssetLoader.getInstance().getImage("arrow.png");
 	
 	public Player(GraphicsContext gc, double x, double y){
 		super(gc, x, y, 40, 40);

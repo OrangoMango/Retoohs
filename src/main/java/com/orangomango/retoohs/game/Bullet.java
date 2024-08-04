@@ -3,7 +3,6 @@ package com.orangomango.retoohs.game;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.geometry.Point2D;
-import javafx.scene.media.AudioClip;
 
 import java.io.*;
 import java.util.*;
@@ -11,6 +10,7 @@ import org.json.JSONObject;
 
 import com.orangomango.retoohs.ui.GameScreen;
 import com.orangomango.retoohs.MainApplication;
+import com.orangomango.retoohs.AssetLoader;
 
 public class Bullet extends GameObject{
 	public static class ShooterConfig{
@@ -36,7 +36,7 @@ public class Bullet extends GameObject{
 			this.ammo--;
 			if (this.ammo < 0){
 				this.ammo = 0;
-				MainApplication.playSound(MainApplication.NOAMMO_SOUND, false);
+				MainApplication.playSound("no_ammo.wav", false);
 				return false;
 			}
 			MainApplication.playSound(gunSounds.get(this.name), false);
@@ -76,16 +76,16 @@ public class Bullet extends GameObject{
 	private int dmg;
 	private JSONObject config;
 	private Point2D startPos;
-	private static final Image IMAGE = MainApplication.assetLoader.getImage("bullet.png");
+	private static final Image IMAGE = AssetLoader.getInstance().getImage("bullet.png");
 
 	private static JSONObject bulletConfig;
 	public static Map<GameObject, ShooterConfig> configs = new HashMap<>();
-	public static Map<String, AudioClip> gunSounds = new HashMap<>();
+	public static Map<String, String> gunSounds = new HashMap<>();
 	public static Map<String, Image> gunImages = new HashMap<>();
 	
 	static {
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(Bullet.class.getResourceAsStream("/bulletConfig.json")));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(Bullet.class.getResourceAsStream("/files/bulletConfig.json")));
 			StringBuilder builder = new StringBuilder();
 			reader.lines().forEach(builder::append);
 			reader.close();
@@ -95,10 +95,19 @@ public class Bullet extends GameObject{
 			Iterator<String> iterator = bulletConfig.keys();
 			while (iterator.hasNext()){
 				String key = iterator.next();
-				gunImages.put(key, MainApplication.assetLoader.getImage(getBulletConfig(key).getString("imageName")));
+				gunImages.put(key, AssetLoader.getInstance().getImage(getBulletConfig(key).getString("imageName")));
 			}
 		} catch (IOException ex){
 			ex.printStackTrace();
+		}
+
+		// Load sounds
+		Iterator<String> iterator = bulletConfig.keys();
+		while (iterator.hasNext()){
+			String key = iterator.next();
+			String audioName = getBulletConfig(key).getString("audioName");
+			AssetLoader.getInstance().loadAudio("/audio/"+audioName);
+			gunSounds.put(key, audioName);
 		}
 	}
 	
@@ -123,14 +132,6 @@ public class Bullet extends GameObject{
 		}
 		Random random = new Random();
 		return guns.get(random.nextInt(guns.size()));
-	}
-	
-	public static void loadGunSounds(){
-		Iterator<String> iterator = bulletConfig.keys();
-		while (iterator.hasNext()){
-			String key = iterator.next();
-			gunSounds.put(key, new AudioClip(Bullet.class.getResource("/audio/"+getBulletConfig(key).getString("audioName")).toExternalForm()));
-		}
 	}
 	
 	public static JSONObject getBulletConfig(String name){
