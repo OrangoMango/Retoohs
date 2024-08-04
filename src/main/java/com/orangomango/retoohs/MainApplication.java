@@ -30,7 +30,7 @@ public class MainApplication extends Application{
 		Scene scene = new Scene(hs.getLayout(), WIDTH, HEIGHT);
 		stage.setScene(scene);
 		stage.setResizable(false);
-		stage.setTitle("Retoohs by OrangoMango");
+		stage.setTitle("retoohS");
 		stage.getIcons().add(AssetLoader.getInstance().getImage("icon.png"));
 		stage.show();
 	}

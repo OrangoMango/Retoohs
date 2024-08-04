@@ -17,4 +17,4 @@ Game made using Java and the JavaFX framework
 https://orangomango.itch.io/retoohs
 https://github.com/OrangoMango/Retoohs
 
-Major-update v3.0
+Major-update v3.0 :)

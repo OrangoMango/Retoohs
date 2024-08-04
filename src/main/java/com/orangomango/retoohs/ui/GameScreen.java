@@ -344,9 +344,7 @@ public class GameScreen{
 		MainApplication.schedule(() -> MainApplication.threadsRunning = true, 500);
 		this.player.stopAnimation();
 		GameScreen.instance = null;
-		if (this.mediaPlayer != null){
-			this.mediaPlayer.stop();
-		}
+		this.mediaPlayer.stop();
 	}
 
 	public void applyTutorial(Consumer<Tutorial> cons){

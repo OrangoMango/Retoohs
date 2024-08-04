@@ -9,7 +9,6 @@ import javafx.scene.effect.Glow;
 
 import java.util.*;
 
-import com.orangomango.retoohs.MainApplication;
 import com.orangomango.retoohs.AssetLoader;
 import com.orangomango.retoohs.ui.GameScreen;
 
